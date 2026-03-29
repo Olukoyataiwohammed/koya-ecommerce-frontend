@@ -1,0 +1,350 @@
+/* Container holding Animation, Header & Nav */
+.fixed-ui {
+  position: sticky;
+  top: 0;
+  z-index: 2000;
+  background: white;
+}
+
+/* Individual layers (optional but recommended) */
+.animination {
+  position: sticky;
+  top: 0;
+  z-index: 2100;
+}
+
+.header {
+  position: sticky;
+  
+  z-index: 2050;
+}
+
+.nav {
+  position: sticky;
+  
+  z-index: 2000;
+}
+
+
+.mainApp{
+  text-align: center;
+  margin-top: 50px;
+  align-content: center;
+}
+
+.loginDetails{
+  background-color: grey;
+  width: 700px;
+  color:black;
+  margin-left:410px;
+  border:solid thick black;
+}
+
+.loginDetails .formLogin{
+  margin-top:30px;
+}
+
+.loginDetails .formLogin label{
+  width:390px;
+  border: solid thin black;
+  border-radius: 5px;
+  background: black;
+  color: white;
+}
+
+.loginDetails .formLogin .inpt{
+  width: 300px;
+  margin-left:5px;
+  
+}
+
+.loginDetails .formLogin .inp{
+  width: 300px;
+  margin-left:10px;
+ 
+}
+
+
+
+.main_nav ul li {
+  list-style: none;
+  position: relative; /* REQUIRED for absolute submenu */
+}
+
+.main_nav ul li:hover {
+  background: transparent;
+  text-align: start;
+  width: 200px;
+  padding: 5px;
+  color: white;
+  height: 50px;
+  cursor: pointer;
+}
+.main_nav ul li .nav_link:hover {
+  color: white;
+  text-align: start;
+}
+
+.nav_link{
+    color: black;
+    text-decoration: none;
+}
+
+.categories {
+  display: none;
+  position: absolute;
+  
+}
+
+.main_nav ul li:hover .categories {
+  display: grid;
+  background: rgb(220, 218, 218);
+  width: 1300px;
+  padding: 10px;
+  margin-top: 20px;
+  margin-left: -6px;
+  height: 500px;
+}
+
+.main_nav ul li:hover .categories li {
+  display: block;
+  background: transparent;
+}
+
+.main_nav ul li:hover .categories li .nav_link:hover{
+  color: white;
+}
+
+
+
+
+
+.product-dropdown {
+  position: absolute;
+  width: 1450px;
+  height: 410px;
+  justify-content: space-around;
+  top: 100%;
+  color: black;
+  left: 0;
+  margin-left: 25px;
+  background: white;
+  padding: 15px;
+  min-width: 320px;
+  display: flex;
+  gap: 25px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  z-index: 1000;
+} 
+
+.main_nav {
+  position: relative;
+}
+
+
+
+.nav-item:last-child .product-dropdown,
+.nav-item:nth-last-child(2) .product-dropdown {
+  left: auto;
+  right: 0;
+}
+
+/* Each subcategory column */
+.subcategory-block {
+  width: 180px;
+}
+
+/* Subcategory title */
+.subcategory-title {
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+/* Links */
+.dropdown-link {
+  color: #333;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.dropdown-link:hover {
+  color: #dc3545;
+}
+
+.brand-title {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.brand-block ul {
+  padding-left: 0;
+}
+
+.brand-block li {
+  list-style: none;
+  margin-bottom: 4px;
+  
+}
+
+.dropdown-link {
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+}
+
+.dropdown-link:hover {
+  color: #0d6efd;
+}
+
+.empty {
+  font-size: 14px;
+  color: #777;
+}
+
+.product-grid{
+  margin-top: 20px;
+  display: grid;
+  gap: 4px;
+  border: solid thick black;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.product-card{
+  text-align: center;
+  width: 100px;
+  background-color: blueviolet;
+  
+}
+
+
+
+
+.container{
+  background: transparent;
+  gap:20px
+}
+.slide{
+  margin-top:20px;
+  width: 950px;
+  margin-left: 20px;
+  
+}
+.img{
+  width: 500px;
+  height: 400px;
+}
+
+.card{
+  margin-top: 15px;
+  border: solid thin transparent;
+  text-align: center
+}
+
+.homeSecond{
+  border: solid thin rgb(18, 17, 17);
+  
+  margin-top: 30px;
+  align-content: center;
+}
+.homeSeconds{
+  margin-bottom: 20px;
+  margin-top: 40px;
+  justify-content: space-evenly;
+  align-content: center;
+}
+.homeSecond .imageContainer{
+  background: black;
+  padding: 5px;
+  width: 200px;
+  height: 180px;
+  border: solid thin black;
+  text-align: center;
+  align-content: center;
+  color: white;
+}
+
+.homeSecond .product_name{
+  justify-content:space-between;
+  background: black;
+  color: white;
+}
+
+.homeSecond .product_name h4{
+  margin-top: 10px;
+}
+
+.product_name h3{
+  
+  padding: 10px;
+}
+
+.homeSecond .imageContainer img{
+  width:190px ;
+  height: 150px ;
+}
+
+
+
+
+
+/* Full height container */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* full viewport height */
+}
+
+/* Page content grows to fill available space */
+.page-content {
+  flex: 1;
+  padding: 1rem; /* optional padding */
+}
+
+/* Fixed header/nav/animination styling */
+
+/* Footer styling */
+footer {
+  background-color: #222;
+  color: white;
+  text-align: center;
+  padding: 1rem;
+}
+
+.homeThird{
+  margin-top: 40px;
+  text-align: center;
+  border: solid thin black;
+}
+
+.homeThird .container_name{
+  padding: 5px;
+  justify-content: space-between;
+  background: purple;
+}
+
+.homeThird .container_product{
+  border: solid thick chartreus;
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns:repeat(4,1fr) ;
+  background: black;
+   color: white;
+   margin-bottom: 20px;
+}
+
+.homeThird .imageContainers{
+  margin-top: 30px;
+  border: solid thin white;
+  color: white;
+  margin-bottom: 10px;
+  border-radius: 20px;
+}
+
+.header{
+  background: purple;
+}
+
+.roundeds{
+  background: purple;
+}
