@@ -27,7 +27,7 @@ const Home = () => {
 
     Promise.all(
       wantedProductIds.map(id =>
-        fetch(`http://127.0.0.1:8000/store/products/${id}/`)
+        fetch(`${process.env.REACT_APP_API_URL}/store/products/${id}/`)
         .then(res => res.json())
         .then(data => data.data)
       )
@@ -42,7 +42,7 @@ const Home = () => {
 
     Promise.all(
       productIds.map(id =>
-        fetch(`http://127.0.0.1:8000/store/products/${id}/`)
+        fetch(`${process.env.REACT_APP_API_URL}/store/products/${id}/`)
           .then(res => res.json())
           .then(data => data.data)
       )
@@ -70,7 +70,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="home bg-purple" id="homes">
+    <div className="home " id="homes">
       <div
         className="bg-dark d-flex gap-5"
         style={{ height: "470px", border: "thick solid white", marginTop: "10px" }}

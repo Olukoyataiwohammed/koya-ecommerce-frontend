@@ -25,7 +25,7 @@ const Cart = () => {
         <p>{cartItem.product.name}</p>
         <p>Qty: {cartItem.quantity}</p>
         <img
-          src={`http://127.0.0.1:8000${cartItem.product.image}`}
+          src={`${process.env.REACT_APP_API_URL}${cartItem.product.image}`}
           alt={cartItem.product.name}
           width={100}
         />

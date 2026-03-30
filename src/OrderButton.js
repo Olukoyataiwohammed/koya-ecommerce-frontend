@@ -56,7 +56,7 @@ export default function OrderButton({ form, newAddress, useNewAddress, token }) 
       // -----------------------------
       // STEP 1: CREATE ORDER
       // -----------------------------
-      const res = await fetch("http://127.0.0.1:8000/order/create/", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/order/create/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -93,7 +93,7 @@ export default function OrderButton({ form, newAddress, useNewAddress, token }) 
       // -----------------------------
       // STEP 2: CREATE PAYMENT
       // -----------------------------
-      const paymentRes = await fetch("http://127.0.0.1:8000/order/payment/create/", {
+      const paymentRes = await fetch(`${process.env.REACT_APP_API_URL}/order/payment/create/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -150,7 +150,7 @@ export default function OrderButton({ form, newAddress, useNewAddress, token }) 
   // -----------------------------
   async function verifyPayment(reference, orderId) {
     try {
-      const verifyRes = await fetch("http://127.0.0.1:8000/order/payment/verify/", {
+      const verifyRes = await fetch(`${process.env.REACT_APP_API_URL}/order/payment/verify/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

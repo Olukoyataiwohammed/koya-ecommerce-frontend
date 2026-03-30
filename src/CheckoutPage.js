@@ -33,7 +33,7 @@ export default function CheckoutPage() {
       return;
     }
 
-    fetch("http://127.0.0.1:8000/auth/addresses/", {
+    fetch(`${process.env.REACT_APP_API_URL}/auth/addresses/`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())

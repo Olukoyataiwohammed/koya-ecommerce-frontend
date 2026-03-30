@@ -12,43 +12,42 @@ const Login = (props) => {
     const [username,setUserName]= useState('');
     const [password,setPassWord] = useState('');
     const [error,setError] = useState('');
-  
-    const handleSubmit= async (event)=>{
+
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        setError('');
+        setError("");
 
         try {
-            const response = await fetch('http://localhost:8000/auth/login/',{
-                method: 'POST',
-                headers: {
-                    'Content-Type': "application/json",
-                },
-                body: JSON.stringify({ username, password }),   
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/login/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ username, password }),
             });
 
+            const data = await response.json();
+
             if (!response.ok) {
-                setError("Invalid username or password");
-                return;
+            setError(data.detail || "Invalid username or password");
+            return;
             }
 
-             const data = await response.json();
-             const newToken = data.access;
+            login(data.access);
+            navigate("/store");
 
-            
-            login(newToken); 
-            navigate('/store');
+        } catch (error) {
+            setError("Network error. Please try again.");
+        }
+        };
+
+
+  
+   
 
         
 
-        
-            setUserName('');
-            setPassWord('');
-        }
-        catch (error){
-            setError(error.message)
-        }
-
-    };
+    
 
 
 

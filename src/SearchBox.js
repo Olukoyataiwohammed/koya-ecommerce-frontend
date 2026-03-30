@@ -13,7 +13,7 @@ const SearchBox = () => {
 
     const fetchProducts = async () => {
       try {
-        const res = await fetch(`http://127.0.0.1:8000/store/products/?search=${query}`);
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/store/products/?search=${query}`);
         const data = await res.json();
         setProducts(data);
       } catch (error) {
@@ -36,7 +36,7 @@ const SearchBox = () => {
             <div key={product.id} className="col-md-3">
               <div className="card">
                 <img
-                  src={`http://127.0.0.1:8000${product.image}`}
+                  src={`${process.env.REACT_APP_API_URL}${product.image}`}
                   alt={product.name}
                   style={{ height: "200px", objectFit: "cover" }}
                 />
