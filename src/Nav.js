@@ -7,7 +7,7 @@ const Nav = () => {
   const [activeCategory, setActiveCategory] = useState(null);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/store/categories/")
+    fetch(`${process.env.REACT_APP_API_URL}/store/categories/`)
       .then((res) => res.json())
       .then(setCategories);
   }, []);
