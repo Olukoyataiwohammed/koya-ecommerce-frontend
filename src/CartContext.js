@@ -156,7 +156,7 @@ const decreaseProductFromCart = useCallback(
     console.log("Refetching cart, token =", token);
     fetchCart();
     //
-  }, [fetchCart]); // refetch whenever user changes
+  }, [fetchCart, token]); // refetch whenever user changes
 
 
   return (
