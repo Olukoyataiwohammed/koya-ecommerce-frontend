@@ -197,7 +197,7 @@ const Home = () => {
           {products.map((item, i) => (
             <div key={i} className="imageContainer">
               <img
-                src={`http://127.0.0.1:8000${item.image}`}
+                src={`${process.env.REACT_APP_API_URL}${item.image}`}
                 alt={item.name}
                 style={{ width: "190px", height: "150px" }}
               />
@@ -222,7 +222,7 @@ const Home = () => {
           {wantedProduct.map((items,i) => (
             <div key={i} className="imageContainers">
               <img className="w-100"
-                src={`http://127.0.0.1:8000${items.image}`}
+                src={`${process.env.REACT_APP_API_URL}${items.image}`}
                 alt={items.name}
                 style={{ width: "190px", height: "150px" }}
               />

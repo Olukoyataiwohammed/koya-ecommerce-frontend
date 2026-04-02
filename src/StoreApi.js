@@ -6,7 +6,7 @@ export const API_BASE_URL = process.env.REACT_APP_API_URL;
 ================================ */
 export const fetchCategories = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}store/categories/`);
+    const response = await fetch(`${API_BASE_URL}/store/categories/`);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -24,7 +24,7 @@ export const fetchCategories = async () => {
 ================================ */
 export const fetchBrands = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}store/brands/`);
+    const response = await fetch(`${API_BASE_URL}/store/brands/`);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -47,7 +47,7 @@ export const fetchProducts = async (authToken = null) => {
     headers.Authorization = `Bearer ${authToken}`;
   }
 
-  const response = await fetch(`${API_BASE_URL}store/products/`, {
+  const response = await fetch(`${API_BASE_URL}/store/products/`, {
     method: "GET",
     headers,
   });
