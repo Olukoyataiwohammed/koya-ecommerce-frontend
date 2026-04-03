@@ -15,8 +15,9 @@ export const CartProvider = ({ children }) => {
 
 
   const fetchCart = useCallback(async () => {
-  console.log(" fetchCart CALLED, token =", token);
+  console.log("fetchCart CALLED, token =", token);
   setLoading(true);
+
   try {
     const headers = {
       "Content-Type": "application/json",
@@ -29,19 +30,26 @@ export const CartProvider = ({ children }) => {
       credentials: "include",
     });
 
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("Cart fetch failed:", res.status, text);
+      throw new Error("Cart request failed");
+    }
+
     const data = await res.json();
     console.log("CART DATA:", data);
+
     setCart(data || { items: [], total_price: 0 });
-
-
-    
   } catch (err) {
     console.error("Fetch cart error", err);
     setCart({ items: [], total_price: 0 });
   } finally {
     setLoading(false);
   }
-}, [token]);
+  }, [token]);
+
+  
+  
 
 
   
