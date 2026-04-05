@@ -23,7 +23,7 @@ const Header = () => {
     navigate(`/searchBox?q=${query}`);
   };
 
-  // 🔥 Close dropdown when clicking outside
+  
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (accountRef.current && !accountRef.current.contains(e.target)) {
@@ -47,12 +47,12 @@ const Header = () => {
           <i>KOYA</i>
         </NavLink>
 
-        <form onSubmit={handleSearch} className="d-flex rounded">
-          <input
-            style={{ width: "300px", height: "40px" }}
+        <form onSubmit={handleSearch} className="form d-flex rounded">
+          <input 
+            
             className="searchBox p-1 rounded-pill"
             type="text"
-            placeholder="Search..."
+            placeholder="🔎"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />

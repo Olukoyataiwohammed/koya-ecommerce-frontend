@@ -36,7 +36,7 @@
   background-color: grey;
   width: 700px;
   color:black;
-  margin-left:410px;
+  margin-left:500px;
   border:solid thick black;
 }
 
@@ -222,7 +222,7 @@
 
 .container{
   background: transparent;
-  gap:20px
+  gap:px
 }
 .slide{
   margin-top:20px;
@@ -348,3 +348,141 @@ footer {
 .roundeds{
   background: purple;
 }
+.searchBox{
+  width: 300px;
+  height: 40px;
+}
+@media only screen and (max-width:480px){
+  #header_row{
+    justify-content: none;
+    padding: 0;
+    margin: 0;
+    
+  }
+  .container{
+    display: grid !important;
+    grid-template-columns:repeat(2,1fr) !important;
+    gap: 15px !important;
+  }
+  
+  
+   .searchBox{
+    width: 50px;
+    height: 40px;
+  }
+  .roundeds{
+    background: black;
+    padding: 0;
+    margin: 0;
+    width: 50px;
+  }
+  
+  #input_roll{
+    width: 20px;
+  }
+    .loginDetails .formLogin .inp{
+    width: 200px;
+    margin-left:10px;
+  
+  }
+  .loginDetails{
+  text-align: center;
+  margin-left: 0px;
+  width: 300px;
+ } 
+ .loginDetails .formLogin label{
+    width:290px;
+    border: solid thin black;
+    border-radius: 5px;
+    background: black;
+    color: white;
+  }
+  .loginDetails .formLogin .inpt{
+    width: 200px;
+    margin-left:5px;
+    
+  }
+  .nav-list{
+    display: grid !important;
+    padding:0px !important;
+    margin: 0px !important;
+    justify-content: unset !important;
+    gap: 10px !important;
+    
+    grid-template-columns: repeat(3,1fr) !important;
+  }
+  .nav_link{
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .product-dropdown {
+  display: block !important;
+  width: 50px !important;
+  background-color: white !important;
+  height: 900px !important;
+}
+
+.subcategory-inline-block {
+  display: block !important;
+  margin-bottom: 10px;
+}
+
+.subcategory-inline-block ul {
+  display: block !important;
+  padding-left: 10px;
+}
+
+.subcategory-inline-block li {
+  display: block !important;
+  margin-bottom: 5px;
+}
+.home{
+  align-content: center !important;
+}
+.home_page{
+  gap: 0 !important;
+  
+}
+.card_box{
+  gap: 0 !important;
+}
+  .card_box_size{
+    width: 80px !important;
+    font-size: 15px !important;
+    height: 100px !important;
+    display: none !important;
+  }
+  .homeSeconds{
+    display: grid !important;
+    grid-template-columns: repeat(2,1fr) !important;
+  }
+  .imageContainer{
+    width: 140px !important;
+  }
+  .img_home{
+    width: 130px !important;
+  }
+
+}
+@media only screen and (max-width:768px){
+  .loginDetails{
+  text-align: center;
+  margin-left: 0;
+  
+ } 
+ 
+
+
+ 
+}
+
+@media only screen and (max-width:1024px){
+  .loginDetails{
+  text-align: center;
+  margin-left: 150px;
+  
+ } 
+
+}
+
+

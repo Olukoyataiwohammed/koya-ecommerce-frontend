@@ -72,7 +72,7 @@ const Home = () => {
   return (
     <div className="home " id="homes">
       <div
-        className="bg-dark d-flex gap-5"
+        className="home_page bg-dark d-flex gap-5 "
         style={{ height: "470px", border: "thick solid white", marginTop: "10px" }}
       >
         {/* 🔹 Carousel */}
@@ -119,8 +119,8 @@ const Home = () => {
 
         {/* 🔹 Text Cards */}
         <div className="card bg-dark">
-          <div className="d-flex gap-4 ">
-            <div
+          <div className=" card_box d-flex gap-4 ">
+            <div className="card_box_size"
               style={{
                 width: "213px",
                 height: "195px",
@@ -138,7 +138,7 @@ const Home = () => {
               </i>
             </div>
 
-            <div
+            <div className="card_box_size"
               style={{
                 width: "213px",
                 height: "195px",
@@ -153,8 +153,8 @@ const Home = () => {
             </div>
           </div>
 
-          <div className="d-flex gap-4 mt-3">
-            <div
+          <div className="card_box d-flex gap-4 mt-3">
+            <div className="card_box_size"
               style={{
                 width: "213px",
                 height: "195px",
@@ -168,7 +168,7 @@ const Home = () => {
               {cardWordOne[index]}
             </div>
 
-            <div
+            <div className="card_box_size"
               style={{
                 width: "213px",
                 height: "195px",
@@ -196,7 +196,7 @@ const Home = () => {
         <div className="homeSeconds d-flex">
           {products.map((item, i) => (
             <div key={i} className="imageContainer">
-              <img
+              <img className="img_home"
                 src={`${process.env.REACT_APP_API_URL}${item.image}`}
                 alt={item.name}
                 style={{ width: "190px", height: "150px" }}

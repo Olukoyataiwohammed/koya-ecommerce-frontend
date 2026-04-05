@@ -20,7 +20,7 @@ const Nav = () => {
         className="nav-hover-wrapper"
         onMouseLeave={() => setActiveCategory(null)}
       >
-        <ul className="nav-list d-flex justify-content-around p-3">
+        <ul className="nav-list d-flex  justify-content-around p-3">
           <span>ALL Categories</span>
           {categories.map((cat) => (
             <li
@@ -28,7 +28,7 @@ const Nav = () => {
               className="nav-item"
               onMouseEnter={() => setActiveCategory(cat)}
             >
-              <NavLink to={`/store/${cat.slug}`} className="nav_link text-white">
+              <NavLink to={`/store/${cat.slug}`} className="nav_link  text-white">
                 {cat.name}
               </NavLink>
             </li>
@@ -39,13 +39,13 @@ const Nav = () => {
         {activeCategory?.children?.length > 0 && (
           <div className="product-dropdown">
             {activeCategory.children.map((sub) => (
-              <div key={sub.id} className="subcategory-block">
+              <div key={sub.id} className="subcategory-inline-block">
                 <h6 className="subcategory-title">{sub.name}</h6>
 
                 {sub.children?.length > 0 && (
-                  <ul className="text-red">
+                  <ul className="text-red d-sm-block">
                     {sub.children.map((child) => (
-                      <li className="text-success" key={child.id}>
+                      <li className="text-success d-sm-block" key={child.id}>
                         <NavLink
                           to={`/store/${child.slug}`}
                           className="dropdown-link"
