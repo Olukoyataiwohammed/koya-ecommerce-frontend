@@ -381,14 +381,14 @@ footer {
     width: 20px;
   }
     .loginDetails .formLogin .inp{
-    width: 200px;
-    margin-left:10px;
+      width: 200px;
+      margin-left:10px;
   
   }
   .loginDetails{
-  text-align: center;
-  margin-left: 0px;
-  width: 300px;
+    text-align: center;
+    margin-left: 0px !important;
+    width: 300px;
  } 
  .loginDetails .formLogin label{
     width:290px;
