@@ -138,7 +138,7 @@ const Home = () => {
               </i>
             </div>
 
-            <div className="card_box_size"
+            <div className="card_box_size second_card"
               style={{
                 width: "213px",
                 height: "195px",
@@ -168,7 +168,7 @@ const Home = () => {
               {cardWordOne[index]}
             </div>
 
-            <div className="card_box_size"
+            <div className="card_box_size second_card"
               style={{
                 width: "213px",
                 height: "195px",

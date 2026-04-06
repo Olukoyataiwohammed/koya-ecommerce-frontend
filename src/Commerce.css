@@ -388,7 +388,7 @@ footer {
   .loginDetails{
     text-align: center;
     margin-left: 0px !important;
-    width: 300px;
+    width: 300px !important;
  } 
  .loginDetails .formLogin label{
     width:290px;
@@ -436,16 +436,16 @@ footer {
   display: block !important;
   margin-bottom: 5px;
 }
-.home{
-  align-content: center !important;
-}
-.home_page{
-  gap: 0 !important;
-  
-}
-.card_box{
-  gap: 0 !important;
-}
+  .home{
+    align-content: center !important;
+  }
+  .home_page{
+    gap: 0 !important;
+    
+  }
+  .card_box{
+    gap: 0 !important;
+  }
   .card_box_size{
     width: 80px !important;
     font-size: 15px !important;
@@ -467,10 +467,19 @@ footer {
 @media only screen and (max-width:768px){
   .loginDetails{
   text-align: center;
-  margin-left: 0;
   
+  width: 500px;
  } 
- 
+ .second_card{
+  display: none;
+ }
+ .home_page{
+  gap:0px !important;
+ }
+ .searchBox{
+    width: 50px;
+    height: 40px;
+  }
 
 
  
