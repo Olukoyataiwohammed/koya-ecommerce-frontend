@@ -482,7 +482,7 @@ footer {
   }
   .homeSeconds{
     display: grid !important;
-    grid-template-columns: repeat(4,1fr) !important;
+    grid-template-columns: repeat(4,1fr) ;
   }
   .imageContainer{
     width: 140px !important;
