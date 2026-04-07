@@ -367,7 +367,7 @@ footer {
   
   
    .searchBox{
-    width: 50px;
+    width: 50px !important;
     height: 40px;
   }
   .roundeds{
@@ -477,10 +477,19 @@ footer {
   gap:0px !important;
  }
  .searchBox{
-    width: 50px;
+    width: 150px;
     height: 40px;
   }
-
+  .homeSeconds{
+    display: grid !important;
+    grid-template-columns: repeat(4,1fr) !important;
+  }
+  .imageContainer{
+    width: 140px !important;
+  }
+  .img_home{
+    width: 130px !important;
+  }
 
  
 }
