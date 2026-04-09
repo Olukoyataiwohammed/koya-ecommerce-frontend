@@ -109,14 +109,30 @@ const decreaseProductFromCart = useCallback(
 
   const removeFromCart = useCallback(
   async (itemId) => {
-    await fetch(`${API_BASE_URL}/cart/item/${itemId}/remove/`, {
-      method: "DELETE",
-      credentials: "include",
-    });
+    try {
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
 
-    await fetchCart();
+      const res = await fetch(`${API_BASE_URL}/cart/item/${itemId}/remove/`, {
+        method: "DELETE",
+        headers,
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("Remove failed:", res.status, text);
+        return;
+      }
+
+      await fetchCart();
+    } catch (err) {
+      console.error("Remove error:", err);
+    }
   },
-  [fetchCart]
+  [fetchCart, token]
 );
 
   
