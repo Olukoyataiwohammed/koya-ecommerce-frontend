@@ -80,7 +80,7 @@ const Store = () => {
         {products.length === 0 && <p>No products available</p>}
         {products.map((product) => (
           <div key={product.id} className="product-card bg-dark text-white m-3 p-3" style={{width:"270px",height:"350px"}}>
-            <img className="bg-dark p-3 w-100" style={{width:"200px",height:"200px"}}
+            <img className="product-image bg-dark p-3 w-100" style={{width:"200px",height:"200px"}}
                 src={
                   product.image
                     ? `${API_BASE_URL}${product.image}`
@@ -89,9 +89,9 @@ const Store = () => {
                 alt={product.name}
               />
                          
-            <h4 style={{textAlign:"left"}}>{product.name}</h4>
+            <h4 className="product-name" style={{textAlign:"left"}}>{product.name}</h4>
             <p style={{textAlign:"left"}} >₦{product.price}</p>
-            <button className="w-100 text-white bg-black" onClick={() => addItemToCart(product.id, 1)}>
+            <button className="price w-100 text-white bg-black" onClick={() => addItemToCart(product.id, 1)}>
               Add to Cart
             </button>
           </div>

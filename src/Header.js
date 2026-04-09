@@ -41,13 +41,13 @@ const Header = () => {
     <header className="header bg-purple">
       <nav
         id="header_row"
-        className="container d-flex justify-content-around bg-dark border border-light p-3"
+        className="containers d-flex justify-content-around bg-dark border border-light p-3"
       >
         <NavLink style={NavDisplay} to="/">
           <i>KOYA</i>
         </NavLink>
 
-        <form onSubmit={handleSearch} className="form d-flex rounded">
+        <form onSubmit={handleSearch} className="d-flex rounded">
           <input 
             
             className="searchBox p-1 rounded-pill"
