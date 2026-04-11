@@ -341,7 +341,7 @@ footer {
   border-radius: 20px;
 }
 
-.header{
+.headers{
   background: purple;
 }
 
@@ -491,6 +491,26 @@ footer {
     font-size: 20px;
     font-weight: bolder !important ;
   }
+  .row{
+    display: grid !important;
+    grid-template-columns:repeat(4,1fr) !important;
+    gap: 15px !important;
+  }
+  .card{
+    width: 100px;
+  }
+  .card-img{
+    width:  80px;
+  }
+  .card-body-name{
+    font-size: 15px;
+  }
+  .card-body-price{
+    font-size: 14px;
+  }
+  .price{
+    font-size: 10px;
+  }
 
  
 }
@@ -559,28 +579,28 @@ footer {
     padding: 0 !important;
   }
   .product-dropdown {
-  display: grid ;
-  grid-template-columns:repeat(2,1fr)!important;
-  align-content: start !important;
-  max-width: 300px !important;
-  background-color: white !important;
-  height: 900px !important;
-}
+    display: grid ;
+    grid-template-columns:repeat(2,1fr)!important;
+    align-content: start !important;
+    max-width: 300px !important;
+    background-color: white !important;
+    height: 900px !important;
+  }
 
-.subcategory-inline-block {
-  display: block !important;
-  margin-bottom: 10px;
-}
+  .subcategory-inline-block {
+    display: block !important;
+    margin-bottom: 10px;
+  }
 
-.subcategory-inline-block ul {
-  display: block !important;
-  padding-left: 10px;
-}
+  .subcategory-inline-block ul {
+    display: block !important;
+    padding-left: 10px;
+  }
 
-.subcategory-inline-block li {
-  display: block !important;
-  margin-bottom: 5px;
-}
+  .subcategory-inline-block li {
+    display: block !important;
+    margin-bottom: 5px;
+  }
   .home{
     align-content: center !important;
   }
@@ -628,7 +648,7 @@ footer {
     width: 80px !important;
     padding: 0px !important;
     margin: 0px !important;
-    height: 200px !important;
+    height: 170px !important;
   }
   .product-image{
     width: 60px !important;

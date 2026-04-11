@@ -38,10 +38,10 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="header bg-purple">
+    <header className="headers bg-purple">
       <nav
         id="header_row"
-        className="containers d-flex justify-content-around bg-dark border border-light p-3"
+        className="container containers d-flex justify-content-around bg-dark border border-light p-3"
       >
         <NavLink style={NavDisplay} to="/">
           <i>KOYA</i>
