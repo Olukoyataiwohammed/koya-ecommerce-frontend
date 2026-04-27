@@ -43,9 +43,9 @@ const Nav = () => {
                 <h6 className="subcategory-title">{sub.name}</h6>
 
                 {sub.children?.length > 0 && (
-                  <ul className="text-red d-sm-block">
+                  <ul className="text-red ">
                     {sub.children.map((child) => (
-                      <li className="text-success d-sm-block" key={child.id}>
+                      <li className="text-success " key={child.id}>
                         <NavLink
                           to={`/store/${child.slug}`}
                           className="dropdown-link"

@@ -41,16 +41,6 @@ const Login = (props) => {
         }
         };
 
-
-  
-   
-
-        
-
-    
-
-
-
     return (
     <div className="loginDetails">
       <form className='formLogin  '  onSubmit={handleSubmit}>

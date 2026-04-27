@@ -15,7 +15,7 @@ const Account = () => {
   }
   
   return (
-    <div className='mainApp text-secondary
+    <div className='mainApp text-secondary 
      ' >
 
       <div className='account_restaurant_logo'>
