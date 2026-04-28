@@ -46,6 +46,7 @@ const App = () => {
             <Route path="/order/:id" element={<OrderOnline />} />
             <Route path="/store/:slug" element={<Store />} />
             <Route path="/product/:slug" element={<ProductDetails />} />
+            <Route path="/wishlist" element={<Wishlist />} />
           </Routes>
         </main>
         <Navbar/>
