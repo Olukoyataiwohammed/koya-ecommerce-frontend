@@ -17,6 +17,7 @@ import CheckoutPage from "./CheckoutPage";
 import OrderOnline from "./OrderOnline";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import Wishlist from "./WishList"
 
 
 const App = () => {
