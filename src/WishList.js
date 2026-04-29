@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 const API_URL = "https://koya-e-commerce-backend-production.up.railway.app";
 
 const Wishlist = () => {
   const [wishlist, setWishlist] = useState([]);
 
-  // 🔐 Get token (adjust if you use another name)
+  // 🔐 Get token
   const token = localStorage.getItem("access");
 
-  // 📥 Fetch wishlist
-  const fetchWishlist = async () => {
+  // 📥 Fetch wishlist (memoized)
+  const fetchWishlist = useCallback(async () => {
     try {
       const res = await fetch(`${API_URL}/wishlist/`, {
         headers: {
@@ -22,11 +22,12 @@ const Wishlist = () => {
     } catch (err) {
       console.error("Error fetching wishlist:", err);
     }
-  };
+  }, [token]); // ✅ include token as dependency
 
+  // ✅ No warning now
   useEffect(() => {
     fetchWishlist();
-  }, []);
+  }, [fetchWishlist]);
 
   // ❌ Remove item
   const removeItem = async (productId) => {

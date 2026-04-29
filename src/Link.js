@@ -17,7 +17,7 @@ import CheckoutPage from "./CheckoutPage";
 import OrderOnline from "./OrderOnline";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import Wishlist from "./Wishlist";
+import WishList from "./WishList";
 
 
 const App = () => {
@@ -47,7 +47,7 @@ const App = () => {
             <Route path="/order/:id" element={<OrderOnline />} />
             <Route path="/store/:slug" element={<Store />} />
             <Route path="/product/:slug" element={<ProductDetails />} />
-            <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/wishlist" element={<WishList />} />
           </Routes>
         </main>
         <Navbar/>
