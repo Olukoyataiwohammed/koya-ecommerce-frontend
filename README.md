@@ -5,7 +5,7 @@ A modern React-based e-commerce web application featuring product browsing, a sh
 
 ## 🚀 Features
 
-- 🛍️ Product/Menu listing
+- 🛍️ Product listing
 - 🔍 Category filtering
 - 🛒 Shopping cart system
 - 👤 User authentication (if added)
