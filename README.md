@@ -23,6 +23,7 @@ A modern React-based e-commerce web application featuring product browsing, a sh
 - CSS
 - Django REST API (Backend)
 - PostgreSQL / SQLite (Backend DB)
+- Paystack (Payment Gateway)
 
 ---
 
