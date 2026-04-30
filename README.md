@@ -1,6 +1,5 @@
-# 🛒 Koya E-commerce / Restaurant App (Frontend)
-
-A modern React-based e-commerce/restaurant web application with product browsing, cart system, and support messaging system connected to a Django backend.
+# 🛒 Koya E-commerce (Frontend)
+A modern React-based e-commerce web application featuring product browsing, a shopping cart system, and a support messaging system connected to a Django backend
 
 ---
 
