@@ -5,26 +5,35 @@ import React, {
   useEffect,
   useState,
   useCallback,
+  useMemo,
 } from "react";
 import { useAuth } from "./AuthContext";
 
 const CartContext = createContext();
 export const useCart = () => useContext(CartContext);
 
-// ✅ Fixed API base URL
-const API_BASE_URL = "https://azeezolabode.pythonanywhere.com";
+const API_BASE_URL =
+  "https://azeezolabode.pythonanywhere.com";
 
 export const CartProvider = ({ children }) => {
   const { token } = useAuth();
 
-  const [cart, setCart] = useState({ items: [], total_price: 0 });
+  const [cart, setCart] = useState({
+    items: [],
+    total_price: 0,
+  });
+
   const [loading, setLoading] = useState(true);
 
-  // ✅ reusable auth headers
-  const getHeaders = () => ({
-    "Content-Type": "application/json",
-    ...(token && { Authorization: `Bearer ${token}` }),
-  });
+  // -----------------------------
+  // STABLE HEADERS (NO WARNINGS)
+  // -----------------------------
+  const headers = useMemo(() => {
+    return {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+  }, [token]);
 
   // -----------------------------
   // FETCH CART
@@ -36,46 +45,39 @@ export const CartProvider = ({ children }) => {
       return;
     }
 
-    setLoading(true);
-
     try {
+      setLoading(true);
+
       const res = await fetch(`${API_BASE_URL}/cart/`, {
         method: "GET",
-        headers: getHeaders(),
+        headers,
       });
-
-      if (res.status === 401) {
-        console.error("Unauthorized - token expired");
-        setCart({ items: [], total_price: 0 });
-        return;
-      }
 
       if (!res.ok) {
         const text = await res.text();
-        throw new Error(text || "Cart fetch failed");
+        throw new Error(text || "Failed to fetch cart");
       }
 
       const data = await res.json();
 
-      // ✅ safe parsing
-      setCart(data.data || data || { items: [], total_price: 0 });
+      setCart(data || { items: [], total_price: 0 });
     } catch (err) {
-      console.error("Fetch cart error:", err.message);
+      console.error("Cart error:", err.message);
       setCart({ items: [], total_price: 0 });
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, [token, headers]);
 
   // -----------------------------
-  // ADD ITEM
+  // ADD TO CART
   // -----------------------------
   const addItemToCart = useCallback(
     async (product_id, quantity = 1) => {
       try {
         const res = await fetch(`${API_BASE_URL}/cart/add/`, {
           method: "POST",
-          headers: getHeaders(),
+          headers,
           body: JSON.stringify({
             product_id,
             quantity: Math.max(quantity, 1),
@@ -84,16 +86,16 @@ export const CartProvider = ({ children }) => {
 
         if (!res.ok) {
           const text = await res.text();
-          console.error("Add failed:", text);
+          console.error(text);
           return;
         }
 
         await fetchCart();
       } catch (err) {
-        console.error("Add to cart error:", err);
+        console.error(err);
       }
     },
-    [fetchCart, token]
+    [headers, fetchCart]
   );
 
   // -----------------------------
@@ -106,22 +108,22 @@ export const CartProvider = ({ children }) => {
           `${API_BASE_URL}/cart/item/${itemId}/decrease/`,
           {
             method: "DELETE",
-            headers: getHeaders(),
+            headers,
           }
         );
 
         if (!res.ok) {
           const text = await res.text();
-          console.error("Decrease failed:", text);
+          console.error(text);
           return;
         }
 
         await fetchCart();
       } catch (err) {
-        console.error("Error decreasing item:", err);
+        console.error(err);
       }
     },
-    [fetchCart, token]
+    [headers, fetchCart]
   );
 
   // -----------------------------
@@ -134,22 +136,22 @@ export const CartProvider = ({ children }) => {
           `${API_BASE_URL}/cart/item/${itemId}/remove/`,
           {
             method: "DELETE",
-            headers: getHeaders(),
+            headers,
           }
         );
 
         if (!res.ok) {
           const text = await res.text();
-          console.error("Remove failed:", text);
+          console.error(text);
           return;
         }
 
         await fetchCart();
       } catch (err) {
-        console.error("Remove error:", err);
+        console.error(err);
       }
     },
-    [fetchCart, token]
+    [headers, fetchCart]
   );
 
   // -----------------------------
@@ -162,35 +164,39 @@ export const CartProvider = ({ children }) => {
   // -----------------------------
   // PLACE ORDER
   // -----------------------------
-  const placeOrder = async (orderData) => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/order/create/`, {
-        method: "POST",
-        headers: getHeaders(),
-        body: JSON.stringify(orderData),
-      });
+  const placeOrder = useCallback(
+    async (orderData) => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/order/create/`, {
+          method: "POST",
+          headers,
+          body: JSON.stringify(orderData),
+        });
 
-      const data = await res.json();
+        const data = await res.json();
 
-      if (!res.ok) {
+        if (!res.ok) {
+          return {
+            success: false,
+            message: data?.detail || "Order failed",
+          };
+        }
+
+        setCart({ items: [], total_price: 0 });
+
+        return {
+          success: true,
+          order: data.order || data,
+        };
+      } catch (err) {
         return {
           success: false,
-          message: data?.detail || "Order failed",
+          message: "Network error",
         };
       }
-
-      // ✅ clear cart after success
-      setCart({ items: [], total_price: 0 });
-
-      return {
-        success: true,
-        order: data.order || data,
-      };
-    } catch (error) {
-      console.error("ORDER ERROR:", error);
-      return { success: false, message: "Network error" };
-    }
-  };
+    },
+    [headers]
+  );
 
   // -----------------------------
   // INITIAL LOAD
