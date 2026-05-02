@@ -33,7 +33,7 @@ export default function CheckoutPage() {
       return;
     }
 
-    fetch(`${process.env.REACT_APP_API_URL}/auth/addresses/`, {
+    fetch(`https://azeezolabode.pythonanywhere.com/auth/addresses/`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())

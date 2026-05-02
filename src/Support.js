@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 const BASE_URL =
-  "https://koya-e-commerce-backend-production.up.railway.app/support/messages/";
+  "https://azeezolabode.pythonanywhere.com/support/messages/";
 
 const Support = () => {
   const [messages, setMessages] = useState([]);

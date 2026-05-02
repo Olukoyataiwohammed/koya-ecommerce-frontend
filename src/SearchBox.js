@@ -11,11 +11,11 @@ const SearchBox = () => {
   const query = queryParams.get("q");
 
   useEffect(() => {
-    if (!query) return;
+    if (!query) return; 
 
     const fetchProducts = async () => {
       try {
-        const res = await fetch(`${process.env.REACT_APP_API_URL}/store/products/?search=${query}`);
+        const res = await fetch(`https://azeezolabode.pythonanywhere.com/store/products/?search=${query}`);
         const data = await res.json();
         setProducts(data);
       } catch (error) {

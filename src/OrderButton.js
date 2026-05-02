@@ -56,7 +56,7 @@ export default function OrderButton({ form, newAddress, useNewAddress, token }) 
       // -----------------------------
       // STEP 1: CREATE ORDER
       // -----------------------------
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/order/create/`, {
+      const res = await fetch("https://azeezolabode.pythonanywhere.com/order/create/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -93,7 +93,7 @@ export default function OrderButton({ form, newAddress, useNewAddress, token }) 
       // -----------------------------
       // STEP 2: CREATE PAYMENT
       // -----------------------------
-      const paymentRes = await fetch(`${process.env.REACT_APP_API_URL}/order/payment/create/`, {
+      const paymentRes = await fetch("https://azeezolabode.pythonanywhere.com/order/payment/create/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -150,7 +150,7 @@ export default function OrderButton({ form, newAddress, useNewAddress, token }) 
   // -----------------------------
   async function verifyPayment(reference, orderId) {
     try {
-      const verifyRes = await fetch(`${process.env.REACT_APP_API_URL}/order/payment/verify/`, {
+      const verifyRes = await fetch("https://azeezolabode.pythonanywhere.com/order/payment/verify/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

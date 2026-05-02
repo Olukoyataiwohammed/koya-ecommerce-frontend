@@ -48,5 +48,5 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// ✅ Custom hook to use context
+
 export const useAuth = () => useContext(AuthContext);

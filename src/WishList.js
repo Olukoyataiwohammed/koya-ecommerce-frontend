@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 
-const API_URL = "https://koya-e-commerce-backend-production.up.railway.app";
+
+const API_URL = "https://azeezolabode.pythonanywhere.com";
 
 const Wishlist = () => {
   const [wishlist, setWishlist] = useState([]);
@@ -22,9 +23,9 @@ const Wishlist = () => {
     } catch (err) {
       console.error("Error fetching wishlist:", err);
     }
-  }, [token]); // ✅ include token as dependency
+  }, [token]); //  include token as dependency
 
-  // ✅ No warning now
+  
   useEffect(() => {
     fetchWishlist();
   }, [fetchWishlist]);

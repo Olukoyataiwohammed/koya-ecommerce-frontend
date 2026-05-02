@@ -7,7 +7,7 @@ const Nav = () => {
   const [activeCategory, setActiveCategory] = useState(null);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/store/categories/`)
+    fetch(`https://azeezolabode.pythonanywhere.com/store/categories/`)
       .then((res) => res.json())
       .then(setCategories);
   }, []);

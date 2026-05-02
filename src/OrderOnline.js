@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "./AuthContext";
 import { useParams } from "react-router-dom";
 
-const API_BASE_URL = process.env.REACT_APP_API_URL;
+const API_BASE_URL = "https://azeezolabode.pythonanywhere.com";
 
 export default function Orders() {
   const { token } = useAuth();

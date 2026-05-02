@@ -27,7 +27,7 @@ const Home = () => {
 
     Promise.all(
       wantedProductIds.map(id =>
-        fetch(`${process.env.REACT_APP_API_URL}/store/products/${id}/`)
+        fetch(`https://azeezolabode.pythonanywhere.com/store/products/${id}/`)
         .then(res => res.json())
         .then(data => data.data)
       )
@@ -42,7 +42,7 @@ const Home = () => {
 
     Promise.all(
       productIds.map(id =>
-        fetch(`${process.env.REACT_APP_API_URL}/store/products/${id}/`)
+        fetch(`https://azeezolabode.pythonanywhere.com/store/products/${id}/`)
           .then(res => res.json())
           .then(data => data.data)
       )
@@ -197,7 +197,7 @@ const Home = () => {
           {products.map((item, i) => (
             <div key={i} className="imageContainer">
               <img className="img_home"
-                src={`${process.env.REACT_APP_API_URL}${item.image}`}
+                src={`https://azeezolabode.pythonanywhere.com${item.image}`}
                 alt={item.name}
                 style={{ width: "190px", height: "150px" }}
               />
@@ -222,7 +222,7 @@ const Home = () => {
           {wantedProduct.map((items,i) => (
             <div key={i} className="imageContainers">
               <img className="w-100"
-                src={`${process.env.REACT_APP_API_URL}${items.image}`}
+                src={`https://azeezolabode.pythonanywhere.com${items.image}`}
                 alt={items.name}
                 style={{ width: "190px", height: "150px" }}
               />

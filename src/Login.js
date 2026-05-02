@@ -18,7 +18,7 @@ const Login = (props) => {
         setError("");
 
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/login/`, {
+            const response = await fetch("https://azeezolabode.pythonanywhere.com/auth/login/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
