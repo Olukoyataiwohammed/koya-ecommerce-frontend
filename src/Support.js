@@ -6,6 +6,8 @@ const BASE_URL =
 const Support = () => {
   const [messages, setMessages] = useState([]);
   const [selectedMessage, setSelectedMessage] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const [form, setForm] = useState({
     name: "",
@@ -13,25 +15,44 @@ const Support = () => {
     message: "",
   });
 
-  // 📥 Fetch all messages
+  // 📥 SAFE FETCH ALL MESSAGES
   const fetchMessages = async () => {
     try {
+      setError("");
+
       const res = await fetch(BASE_URL);
+
+      if (!res.ok) {
+        setMessages([]);
+        setError("Failed to load messages");
+        setLoading(false);
+        return;
+      }
+
       const data = await res.json();
-      setMessages(data);
+
+      // ✅ always ensure array
+      setMessages(Array.isArray(data) ? data : data?.results || []);
     } catch (err) {
-      console.error("Error fetching messages:", err);
+      console.error(err);
+      setMessages([]);
+      setError("Network error");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // 📥 Fetch single message (NEW FEATURE)
+  // 📥 SAFE SINGLE MESSAGE
   const fetchSingleMessage = async (id) => {
     try {
       const res = await fetch(`${BASE_URL}${id}/`);
+
+      if (!res.ok) return;
+
       const data = await res.json();
       setSelectedMessage(data);
     } catch (err) {
-      console.error("Error fetching single message:", err);
+      console.error(err);
     }
   };
 
@@ -42,17 +63,17 @@ const Support = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // ✍️ Handle input
+  // ✍️ INPUT HANDLER
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // 📤 Send message
+  // 📤 SAFE SUBMIT
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      await fetch(BASE_URL, {
+      const res = await fetch(BASE_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,16 +81,28 @@ const Support = () => {
         body: JSON.stringify(form),
       });
 
+      if (!res.ok) {
+        setError("Failed to send message");
+        return;
+      }
+
       setForm({ name: "", email: "", message: "" });
       fetchMessages();
     } catch (err) {
-      console.error("Error sending message:", err);
+      console.error(err);
+      setError("Network error while sending message");
     }
   };
+
+  // ⏳ LOADING STATE
+  if (loading) return <p>Loading support messages...</p>;
 
   return (
     <div>
       <h2>Support Chat</h2>
+
+      {/* ⚠️ ERROR */}
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
       {/* 📝 FORM */}
       <form onSubmit={handleSubmit}>
@@ -78,18 +111,21 @@ const Support = () => {
           value={form.name}
           onChange={handleChange}
           placeholder="Name"
+          required
         />
         <input
           name="email"
           value={form.email}
           onChange={handleChange}
           placeholder="Email"
+          required
         />
         <textarea
           name="message"
           value={form.message}
           onChange={handleChange}
           placeholder="Message"
+          required
         />
         <button type="submit">Send</button>
       </form>
@@ -98,38 +134,42 @@ const Support = () => {
       <div>
         <h3>All Messages</h3>
 
-        {messages.map((msg) => (
-          <div
-            key={msg.id}
-            style={{ marginTop: "10px", cursor: "pointer" }}
-            onClick={() => fetchSingleMessage(msg.id)}
-          >
-            <p>
-              <strong>You:</strong> {msg.message}
-            </p>
-
-            {msg.reply && (
-              <p style={{ color: "green" }}>
-                <strong>Admin:</strong> {msg.reply}
+        {!Array.isArray(messages) || messages.length === 0 ? (
+          <p>No messages yet</p>
+        ) : (
+          messages.map((msg) => (
+            <div
+              key={msg?.id}
+              style={{ marginTop: "10px", cursor: "pointer" }}
+              onClick={() => fetchSingleMessage(msg.id)}
+            >
+              <p>
+                <strong>You:</strong> {msg?.message}
               </p>
-            )}
-          </div>
-        ))}
+
+              {msg?.reply && (
+                <p style={{ color: "green" }}>
+                  <strong>Admin:</strong> {msg.reply}
+                </p>
+              )}
+            </div>
+          ))
+        )}
       </div>
 
-      {/* 🔍 SINGLE MESSAGE VIEW */}
+      {/* 🔍 SINGLE MESSAGE */}
       {selectedMessage && (
         <div style={{ marginTop: "20px", borderTop: "1px solid #ccc" }}>
           <h3>Message Details</h3>
 
           <p>
-            <strong>Name:</strong> {selectedMessage.name}
+            <strong>Name:</strong> {selectedMessage?.name}
           </p>
           <p>
-            <strong>Message:</strong> {selectedMessage.message}
+            <strong>Message:</strong> {selectedMessage?.message}
           </p>
 
-          {selectedMessage.reply ? (
+          {selectedMessage?.reply ? (
             <p style={{ color: "green" }}>
               <strong>Admin Reply:</strong> {selectedMessage.reply}
             </p>
