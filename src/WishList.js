@@ -115,7 +115,7 @@ const Wishlist = () => {
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       {!Array.isArray(wishlist) || wishlist.length === 0 ? (
-        <p>No items in wishlist</p>
+        <p>No items in wishlist...Please login to view wishlist</p>
       ) : (
         wishlist.map((item) => (
           <div key={item?.id} style={{ marginBottom: 20 }}>

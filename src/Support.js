@@ -9,7 +9,7 @@ const Support = () => {
 
   const [messages, setMessages] = useState([]);
   const [selectedMessage, setSelectedMessage] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // 👈 start false
   const [error, setError] = useState("");
 
   const [form, setForm] = useState({
@@ -18,18 +18,20 @@ const Support = () => {
     message: "",
   });
 
-  // ✅ WRAPPED IN useCallback (fixes build error)
+  // ✅ FETCH ONLY IF LOGGED IN
   const fetchMessages = useCallback(async () => {
-    try {
-      setError("");
+    if (!accessToken) return;
 
+    setLoading(true);
+    setError("");
+
+    try {
       let res = await fetch(BASE_URL, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
 
-      // token expired
       if (res.status === 401) {
         const newToken = await refreshAccessToken();
         if (!newToken) return logout();
@@ -58,50 +60,28 @@ const Support = () => {
     }
   }, [accessToken, refreshAccessToken, logout]);
 
-  // ✅ SAFE SINGLE MESSAGE FETCH
-  const fetchSingleMessage = async (id) => {
-    try {
-      let res = await fetch(`${BASE_URL}${id}/`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      if (res.status === 401) {
-        const newToken = await refreshAccessToken();
-        if (!newToken) return logout();
-
-        res = await fetch(`${BASE_URL}${id}/`, {
-          headers: {
-            Authorization: `Bearer ${newToken}`,
-          },
-        });
-      }
-
-      if (!res.ok) return;
-
-      const data = await res.json();
-      setSelectedMessage(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  // ✅ FIXED DEPENDENCY WARNING
+  // ✅ RUN ONLY IF LOGGED IN
   useEffect(() => {
+    if (!accessToken) return;
+
     fetchMessages();
 
     const interval = setInterval(fetchMessages, 5000);
     return () => clearInterval(interval);
-  }, [fetchMessages]);
+  }, [accessToken, fetchMessages]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // ✅ SEND MESSAGE
+  // ✅ SEND MESSAGE ONLY IF LOGGED IN
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!accessToken) {
+      setError("You must be logged in to send a message.");
+      return;
+    }
 
     try {
       let res = await fetch(BASE_URL, {
@@ -139,6 +119,18 @@ const Support = () => {
     }
   };
 
+  // 🚨 🔥 MAIN FIX: BLOCK UI IF NOT LOGGED IN
+  if (!accessToken) {
+    return (
+      <div>
+        <h2>Support Chat</h2>
+        <p style={{ color: "red" }}>
+          You must be logged in to use support.
+        </p>
+      </div>
+    );
+  }
+
   if (loading) return <p>Loading support messages...</p>;
 
   return (
@@ -157,14 +149,13 @@ const Support = () => {
       <div>
         <h3>All Messages</h3>
 
-        {!Array.isArray(messages) || messages.length === 0 ? (
+        {messages.length === 0 ? (
           <p>No messages yet</p>
         ) : (
           messages.map((msg) => (
             <div
               key={msg?.id}
               style={{ marginTop: "10px", cursor: "pointer" }}
-              onClick={() => fetchSingleMessage(msg.id)}
             >
               <p><strong>You:</strong> {msg?.message}</p>
 
@@ -177,25 +168,6 @@ const Support = () => {
           ))
         )}
       </div>
-
-      {selectedMessage && (
-        <div style={{ marginTop: "20px", borderTop: "1px solid #ccc" }}>
-          <h3>Message Details</h3>
-
-          <p><strong>Name:</strong> {selectedMessage?.name}</p>
-          <p><strong>Message:</strong> {selectedMessage?.message}</p>
-
-          {selectedMessage?.reply ? (
-            <p style={{ color: "green" }}>
-              <strong>Admin Reply:</strong> {selectedMessage.reply}
-            </p>
-          ) : (
-            <p>No reply yet</p>
-          )}
-
-          <button onClick={() => setSelectedMessage(null)}>Close</button>
-        </div>
-      )}
     </div>
   );
 };

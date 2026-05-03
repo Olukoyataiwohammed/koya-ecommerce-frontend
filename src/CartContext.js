@@ -12,70 +12,106 @@ import { useAuth } from "./AuthContext";
 const CartContext = createContext();
 export const useCart = () => useContext(CartContext);
 
-const API_BASE_URL =
-  "https://azeezolabode.pythonanywhere.com";
+const API_BASE_URL = "https://azeezolabode.pythonanywhere.com";
 
 export const CartProvider = ({ children }) => {
-  const { token } = useAuth();
+  const { accessToken, refreshAccessToken, logout } = useAuth();
 
   const [cart, setCart] = useState({
     items: [],
     total_price: 0,
   });
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  // -----------------------------
-  // STABLE HEADERS (NO WARNINGS)
-  // -----------------------------
+  // ✅ HEADERS
   const headers = useMemo(() => {
     return {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(accessToken && {
+        Authorization: `Bearer ${accessToken}`,
+      }),
     };
-  }, [token]);
+  }, [accessToken]);
+
+  // -----------------------------
+  // 🟡 LOCAL CART (GUEST USERS)
+  // -----------------------------
+  const getLocalCart = () =>
+    JSON.parse(localStorage.getItem("cart")) || [];
+
+  const setLocalCart = (items) => {
+    localStorage.setItem("cart", JSON.stringify(items));
+    setCart({ items, total_price: 0 });
+  };
 
   // -----------------------------
   // FETCH CART
   // -----------------------------
   const fetchCart = useCallback(async () => {
-    if (!token) {
-      setCart({ items: [], total_price: 0 });
-      setLoading(false);
+    // 🟡 GUEST USER
+    if (!accessToken) {
+      const local = getLocalCart();
+      setCart({ items: local, total_price: 0 });
       return;
     }
 
     try {
       setLoading(true);
 
-      const res = await fetch(`${API_BASE_URL}/cart/`, {
-        method: "GET",
+      let res = await fetch(`${API_BASE_URL}/cart/`, {
         headers,
       });
 
+      // 🔁 HANDLE TOKEN EXPIRY
+      if (res.status === 401) {
+        const newToken = await refreshAccessToken();
+        if (!newToken) return logout();
+
+        res = await fetch(`${API_BASE_URL}/cart/`, {
+          headers: {
+            Authorization: `Bearer ${newToken}`,
+          },
+        });
+      }
+
       if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text || "Failed to fetch cart");
+        console.error("Failed to fetch cart");
+        return;
       }
 
       const data = await res.json();
-
       setCart(data || { items: [], total_price: 0 });
     } catch (err) {
-      console.error("Cart error:", err.message);
-      setCart({ items: [], total_price: 0 });
+      console.error("Cart error:", err);
     } finally {
       setLoading(false);
     }
-  }, [token, headers]);
+  }, [accessToken, headers, refreshAccessToken, logout]);
 
   // -----------------------------
   // ADD TO CART
   // -----------------------------
   const addItemToCart = useCallback(
     async (product_id, quantity = 1) => {
+      // 🟡 GUEST USER (NO LOGIN)
+      if (!accessToken) {
+        const existing = getLocalCart();
+
+        const item = existing.find((i) => i.id === product_id);
+
+        if (item) {
+          item.quantity += quantity;
+        } else {
+          existing.push({ id: product_id, quantity });
+        }
+
+        setLocalCart(existing);
+        return;
+      }
+
       try {
-        const res = await fetch(`${API_BASE_URL}/cart/add/`, {
+        let res = await fetch(`${API_BASE_URL}/cart/add/`, {
           method: "POST",
           headers,
           body: JSON.stringify({
@@ -84,46 +120,36 @@ export const CartProvider = ({ children }) => {
           }),
         });
 
+        // 🔁 HANDLE TOKEN EXPIRY
+        if (res.status === 401) {
+          const newToken = await refreshAccessToken();
+          if (!newToken) return logout();
+
+          res = await fetch(`${API_BASE_URL}/cart/add/`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${newToken}`,
+            },
+            body: JSON.stringify({
+              product_id,
+              quantity,
+            }),
+          });
+        }
+
         if (!res.ok) {
           const text = await res.text();
-          console.error(text);
+          console.error("Add to cart error:", text);
           return;
         }
 
         await fetchCart();
       } catch (err) {
-        console.error(err);
+        console.error("Add error:", err);
       }
     },
-    [headers, fetchCart]
-  );
-
-  // -----------------------------
-  // DECREASE ITEM
-  // -----------------------------
-  const decreaseProductFromCart = useCallback(
-    async (itemId) => {
-      try {
-        const res = await fetch(
-          `${API_BASE_URL}/cart/item/${itemId}/decrease/`,
-          {
-            method: "DELETE",
-            headers,
-          }
-        );
-
-        if (!res.ok) {
-          const text = await res.text();
-          console.error(text);
-          return;
-        }
-
-        await fetchCart();
-      } catch (err) {
-        console.error(err);
-      }
-    },
-    [headers, fetchCart]
+    [accessToken, headers, fetchCart, refreshAccessToken, logout]
   );
 
   // -----------------------------
@@ -131,75 +157,28 @@ export const CartProvider = ({ children }) => {
   // -----------------------------
   const removeFromCart = useCallback(
     async (itemId) => {
-      try {
-        const res = await fetch(
-          `${API_BASE_URL}/cart/item/${itemId}/remove/`,
-          {
-            method: "DELETE",
-            headers,
-          }
-        );
+      if (!accessToken) {
+        const updated = getLocalCart().filter((i) => i.id !== itemId);
+        setLocalCart(updated);
+        return;
+      }
 
-        if (!res.ok) {
-          const text = await res.text();
-          console.error(text);
-          return;
-        }
+      try {
+        await fetch(`${API_BASE_URL}/cart/item/${itemId}/remove/`, {
+          method: "DELETE",
+          headers,
+        });
 
         await fetchCart();
       } catch (err) {
         console.error(err);
       }
     },
-    [headers, fetchCart]
+    [accessToken, headers, fetchCart]
   );
 
   // -----------------------------
-  // CLEAR CART (LOCAL ONLY)
-  // -----------------------------
-  const clearCart = useCallback(() => {
-    setCart({ items: [], total_price: 0 });
-  }, []);
-
-  // -----------------------------
-  // PLACE ORDER
-  // -----------------------------
-  const placeOrder = useCallback(
-    async (orderData) => {
-      try {
-        const res = await fetch(`${API_BASE_URL}/order/create/`, {
-          method: "POST",
-          headers,
-          body: JSON.stringify(orderData),
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-          return {
-            success: false,
-            message: data?.detail || "Order failed",
-          };
-        }
-
-        setCart({ items: [], total_price: 0 });
-
-        return {
-          success: true,
-          order: data.order || data,
-        };
-      } catch (err) {
-        return {
-          success: false,
-          message: "Network error",
-        };
-      }
-    },
-    [headers]
-  );
-
-  // -----------------------------
-  // INITIAL LOAD
+  // LOAD CART
   // -----------------------------
   useEffect(() => {
     fetchCart();
@@ -212,11 +191,7 @@ export const CartProvider = ({ children }) => {
         loading,
         addItemToCart,
         fetchCart,
-        setCart,
         removeFromCart,
-        clearCart,
-        placeOrder,
-        decreaseProductFromCart,
       }}
     >
       {children}

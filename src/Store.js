@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { fetchProducts, fetchCategories, fetchBrands, API_BASE_URL } from "./StoreApi";
+import {
+  fetchProducts,
+  fetchCategories,
+  fetchBrands,
+  API_BASE_URL,
+} from "./StoreApi";
+
 import { useCart } from "./CartContext";
 import { useAuth } from "./AuthContext";
 import { useParams } from "react-router-dom";
 import "./Commerce.css";
 
 const Store = () => {
-  const { addItemToCart } = useCart();
-  const { token } = useAuth();
+  const { addItemToCart, fetchCart } = useCart();
+  const { accessToken } = useAuth(); // ✅ FIXED (was token)
   const { slug } = useParams();
 
   const [products, setProducts] = useState([]);
@@ -16,12 +22,11 @@ const Store = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // 🔥 Track loading per product
   const [loadingWishlist, setLoadingWishlist] = useState(null);
 
-  // ❤️ Add to wishlist
+  // ❤️ ADD TO WISHLIST
   const addToWishlist = async (productId) => {
-    if (!token) {
+    if (!accessToken) {
       alert("Please login to add to wishlist");
       return;
     }
@@ -33,15 +38,12 @@ const Store = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`, // ✅ FIXED
         },
         body: JSON.stringify({ product_id: productId }),
       });
 
-      let data = {};
-      try {
-        data = await res.json();
-      } catch {}
+      const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
         console.warn(data.detail || "Already in wishlist");
@@ -61,12 +63,16 @@ const Store = () => {
         setLoading(true);
 
         const response = slug
-          ? await fetch(`${API_BASE_URL}/store/products/category/${slug}/`)
+          ? await fetch(
+              `${API_BASE_URL}/store/products/category/${slug}/`
+            )
           : null;
 
         const productsData = slug
-          ? (response.ok ? await response.json() : [])
-          : await fetchProducts(token || null);
+          ? response.ok
+            ? await response.json()
+            : []
+          : await fetchProducts(accessToken || null); // ✅ FIXED
 
         const categoriesData = await fetchCategories();
         const brandsData = await fetchBrands();
@@ -83,7 +89,7 @@ const Store = () => {
     };
 
     loadStoreData();
-  }, [slug, token]);
+  }, [slug, accessToken]);
 
   if (loading) return <p>Loading products...</p>;
   if (error) return <p>{error}</p>;
@@ -131,22 +137,28 @@ const Store = () => {
             <h4 style={{ textAlign: "left" }}>{product.name}</h4>
             <p style={{ textAlign: "left" }}>₦{product.price}</p>
 
+            {/* 🛒 ADD TO CART (FIXED) */}
             <button
               className="price w-100 text-white bg-black"
-              onClick={() => addItemToCart(product.id, 1)}
+              onClick={async () => {
+                console.log("Adding to cart:", product.id);
+
+                await addItemToCart(product.id, 1);
+
+                // 🔥 ensure UI updates instantly
+                fetchCart();
+              }}
             >
               Add to Cart
             </button>
 
-            {/* ❤️ Wishlist Button */}
+            {/* ❤️ WISHLIST */}
             <button
               className="w-100 mt-2"
               onClick={() => addToWishlist(product.id)}
               disabled={loadingWishlist === product.id}
             >
-              {loadingWishlist === product.id
-                ? "Adding..."
-                : "❤️ "}
+              {loadingWishlist === product.id ? "Adding..." : "❤️ Wishlist"}
             </button>
           </div>
         ))}
