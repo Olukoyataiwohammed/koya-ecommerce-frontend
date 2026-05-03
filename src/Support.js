@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useAuth } from "./AuthContext";
 
 const BASE_URL =
@@ -18,8 +18,8 @@ const Support = () => {
     message: "",
   });
 
-  // ✅ FETCH WITH TOKEN + AUTO REFRESH
-  const fetchMessages = async () => {
+  // ✅ WRAPPED IN useCallback (fixes build error)
+  const fetchMessages = useCallback(async () => {
     try {
       setError("");
 
@@ -29,14 +29,10 @@ const Support = () => {
         },
       });
 
-      // 🔥 HANDLE TOKEN EXPIRY
+      // token expired
       if (res.status === 401) {
         const newToken = await refreshAccessToken();
-
-        if (!newToken) {
-          logout();
-          return;
-        }
+        if (!newToken) return logout();
 
         res = await fetch(BASE_URL, {
           headers: {
@@ -55,14 +51,14 @@ const Support = () => {
       setMessages(Array.isArray(data) ? data : data?.results || []);
     } catch (err) {
       console.error(err);
-      setMessages([]);
       setError("Network error");
+      setMessages([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [accessToken, refreshAccessToken, logout]);
 
-  // ✅ SINGLE MESSAGE (also safe)
+  // ✅ SAFE SINGLE MESSAGE FETCH
   const fetchSingleMessage = async (id) => {
     try {
       let res = await fetch(`${BASE_URL}${id}/`, {
@@ -91,18 +87,19 @@ const Support = () => {
     }
   };
 
+  // ✅ FIXED DEPENDENCY WARNING
   useEffect(() => {
     fetchMessages();
 
     const interval = setInterval(fetchMessages, 5000);
     return () => clearInterval(interval);
-  }, [accessToken]);
+  }, [fetchMessages]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // ✅ SEND MESSAGE (with token)
+  // ✅ SEND MESSAGE
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -138,7 +135,6 @@ const Support = () => {
       setForm({ name: "", email: "", message: "" });
       fetchMessages();
     } catch (err) {
-      console.error(err);
       setError("Network error while sending message");
     }
   };
@@ -152,27 +148,9 @@ const Support = () => {
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       <form onSubmit={handleSubmit}>
-        <input
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          placeholder="Name"
-          required
-        />
-        <input
-          name="email"
-          value={form.email}
-          onChange={handleChange}
-          placeholder="Email"
-          required
-        />
-        <textarea
-          name="message"
-          value={form.message}
-          onChange={handleChange}
-          placeholder="Message"
-          required
-        />
+        <input name="name" value={form.name} onChange={handleChange} placeholder="Name" required />
+        <input name="email" value={form.email} onChange={handleChange} placeholder="Email" required />
+        <textarea name="message" value={form.message} onChange={handleChange} placeholder="Message" required />
         <button type="submit">Send</button>
       </form>
 
@@ -188,9 +166,7 @@ const Support = () => {
               style={{ marginTop: "10px", cursor: "pointer" }}
               onClick={() => fetchSingleMessage(msg.id)}
             >
-              <p>
-                <strong>You:</strong> {msg?.message}
-              </p>
+              <p><strong>You:</strong> {msg?.message}</p>
 
               {msg?.reply && (
                 <p style={{ color: "green" }}>
@@ -217,9 +193,7 @@ const Support = () => {
             <p>No reply yet</p>
           )}
 
-          <button onClick={() => setSelectedMessage(null)}>
-            Close
-          </button>
+          <button onClick={() => setSelectedMessage(null)}>Close</button>
         </div>
       )}
     </div>
