@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { useAuth } from "./AuthContext";
 
 const BASE_URL =
   "https://azeezolabode.pythonanywhere.com/support/messages/";
 
 const Support = () => {
+  const { accessToken, refreshAccessToken, logout } = useAuth();
+
   const [messages, setMessages] = useState([]);
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -15,23 +18,40 @@ const Support = () => {
     message: "",
   });
 
-  // 📥 SAFE FETCH ALL MESSAGES
+  // ✅ FETCH WITH TOKEN + AUTO REFRESH
   const fetchMessages = async () => {
     try {
       setError("");
 
-      const res = await fetch(BASE_URL);
+      let res = await fetch(BASE_URL, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      // 🔥 HANDLE TOKEN EXPIRY
+      if (res.status === 401) {
+        const newToken = await refreshAccessToken();
+
+        if (!newToken) {
+          logout();
+          return;
+        }
+
+        res = await fetch(BASE_URL, {
+          headers: {
+            Authorization: `Bearer ${newToken}`,
+          },
+        });
+      }
 
       if (!res.ok) {
         setMessages([]);
         setError("Failed to load messages");
-        setLoading(false);
         return;
       }
 
       const data = await res.json();
-
-      // ✅ always ensure array
       setMessages(Array.isArray(data) ? data : data?.results || []);
     } catch (err) {
       console.error(err);
@@ -42,10 +62,25 @@ const Support = () => {
     }
   };
 
-  // 📥 SAFE SINGLE MESSAGE
+  // ✅ SINGLE MESSAGE (also safe)
   const fetchSingleMessage = async (id) => {
     try {
-      const res = await fetch(`${BASE_URL}${id}/`);
+      let res = await fetch(`${BASE_URL}${id}/`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (res.status === 401) {
+        const newToken = await refreshAccessToken();
+        if (!newToken) return logout();
+
+        res = await fetch(`${BASE_URL}${id}/`, {
+          headers: {
+            Authorization: `Bearer ${newToken}`,
+          },
+        });
+      }
 
       if (!res.ok) return;
 
@@ -61,25 +96,39 @@ const Support = () => {
 
     const interval = setInterval(fetchMessages, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [accessToken]);
 
-  // ✍️ INPUT HANDLER
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // 📤 SAFE SUBMIT
+  // ✅ SEND MESSAGE (with token)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await fetch(BASE_URL, {
+      let res = await fetch(BASE_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify(form),
       });
+
+      if (res.status === 401) {
+        const newToken = await refreshAccessToken();
+        if (!newToken) return logout();
+
+        res = await fetch(BASE_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${newToken}`,
+          },
+          body: JSON.stringify(form),
+        });
+      }
 
       if (!res.ok) {
         setError("Failed to send message");
@@ -94,17 +143,14 @@ const Support = () => {
     }
   };
 
-  // ⏳ LOADING STATE
   if (loading) return <p>Loading support messages...</p>;
 
   return (
     <div>
       <h2>Support Chat</h2>
 
-      {/* ⚠️ ERROR */}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {/* 📝 FORM */}
       <form onSubmit={handleSubmit}>
         <input
           name="name"
@@ -130,7 +176,6 @@ const Support = () => {
         <button type="submit">Send</button>
       </form>
 
-      {/* 💬 MESSAGE LIST */}
       <div>
         <h3>All Messages</h3>
 
@@ -157,17 +202,12 @@ const Support = () => {
         )}
       </div>
 
-      {/* 🔍 SINGLE MESSAGE */}
       {selectedMessage && (
         <div style={{ marginTop: "20px", borderTop: "1px solid #ccc" }}>
           <h3>Message Details</h3>
 
-          <p>
-            <strong>Name:</strong> {selectedMessage?.name}
-          </p>
-          <p>
-            <strong>Message:</strong> {selectedMessage?.message}
-          </p>
+          <p><strong>Name:</strong> {selectedMessage?.name}</p>
+          <p><strong>Message:</strong> {selectedMessage?.message}</p>
 
           {selectedMessage?.reply ? (
             <p style={{ color: "green" }}>

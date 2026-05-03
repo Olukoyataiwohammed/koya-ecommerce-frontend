@@ -1,74 +1,104 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from './AuthContext';
+const Login = ({ onPressed }) => {
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
+  const [username, setUserName] = useState("");
+  const [password, setPassWord] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError("");
+    setLoading(true);
 
-const Login = (props) => {
-    const {onPressed} = props;  
-    const { login } = useAuth();
-    const navigate = useNavigate();
-    const [username,setUserName]= useState('');
-    const [password,setPassWord] = useState('');
-    const [error,setError] = useState('');
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        setError("");
-
-        try {
-            const response = await fetch("https://azeezolabode.pythonanywhere.com/auth/login/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ username, password }),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-            setError(data.detail || "Invalid username or password");
-            return;
-            }
-
-            login(data.access);
-            navigate("/store");
-
-        } catch (error) {
-            setError("Network error. Please try again.");
+    try {
+      const response = await fetch(
+        "https://azeezolabode.pythonanywhere.com/auth/login/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, password }),
         }
-        };
+      );
 
-    return (
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.detail || "Invalid username or password");
+        setLoading(false);
+        return;
+      }
+
+      // ✅ IMPORTANT FIX: store BOTH tokens
+      if (!data.access || !data.refresh) {
+        setError("Invalid server response (missing tokens)");
+        setLoading(false);
+        return;
+      }
+
+      login({
+        access: data.access,
+        refresh: data.refresh,
+      });
+
+      navigate("/store");
+    } catch (err) {
+      console.error(err);
+      setError("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
     <div className="loginDetails">
-      <form className='formLogin  '  onSubmit={handleSubmit}>
+      <form className="formLogin" onSubmit={handleSubmit}>
         <div className="userName">
-            <label className="labelOne mt-2">
-                Username:
-                <input className="inpt" type='text' name='username' value={username} onChange={(event)=>setUserName(event.target.value)}  required/>
-            </label>
+          <label className="labelOne mt-2">
+            Username:
+            <input
+              className="inpt"
+              type="text"
+              value={username}
+              onChange={(e) => setUserName(e.target.value)}
+              required
+            />
+          </label>
         </div>
+
         <div className="passWord">
-            <label className="labelOne mt-2">
-                Password:
-                <input className="inp ml-2" type='password' value={password} onChange={(event)=>setPassWord(event.target.value)} name='password'  required/>
-            </label>
+          <label className="labelOne mt-2">
+            Password:
+            <input
+              className="inp ml-2"
+              type="password"
+              value={password}
+              onChange={(e) => setPassWord(e.target.value)}
+              required
+            />
+          </label>
         </div>
-        <button className="w-50" type='submit'>Log In </button>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+
+        <button className="w-50" type="submit" disabled={loading}>
+          {loading ? "Logging in..." : "Log In"}
+        </button>
+
+        {error && <p style={{ color: "red" }}>{error}</p>}
       </form>
-      <div className='display'>
+
+      <div className="display">
         <p onClick={onPressed}>Sign Up</p>
         <p>Forgot Password</p>
       </div>
     </div>
-  )
-    
-  
-}
-
-
+  );
+};
 
 export default Login;

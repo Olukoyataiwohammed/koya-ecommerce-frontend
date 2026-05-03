@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { useAuth } from "./AuthContext";
 
 const API_URL = "https://azeezolabode.pythonanywhere.com";
 
@@ -7,39 +8,45 @@ const Wishlist = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const getToken = () => localStorage.getItem("access");
+  const { accessToken, refreshAccessToken, logout } = useAuth();
 
   const fetchWishlist = useCallback(async () => {
     setLoading(true);
     setError("");
 
     try {
-      const token = getToken();
-
-      if (!token) {
+      if (!accessToken) {
         setWishlist([]);
         setLoading(false);
         return;
       }
 
-      const res = await fetch(`${API_URL}/wishlist/`, {
+      let res = await fetch(`${API_URL}/wishlist/`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
 
+      // 🔥 HANDLE TOKEN EXPIRY PROPERLY
       if (res.status === 401) {
-        localStorage.removeItem("access");
-        setWishlist([]);
-        setError("Session expired. Please login again.");
-        setLoading(false);
-        return;
+        const newToken = await refreshAccessToken();
+
+        if (!newToken) {
+          logout();
+          return;
+        }
+
+        // retry request
+        res = await fetch(`${API_URL}/wishlist/`, {
+          headers: {
+            Authorization: `Bearer ${newToken}`,
+          },
+        });
       }
 
       if (!res.ok) {
         setWishlist([]);
         setError("Failed to load wishlist.");
-        setLoading(false);
         return;
       }
 
@@ -53,12 +60,11 @@ const Wishlist = () => {
       setWishlist(Array.isArray(list) ? list : []);
     } catch (err) {
       console.error(err);
-      setWishlist([]);
       setError("Network error. Try again.");
     } finally {
       setLoading(false);
     }
-  }, []); // keep empty is OK because getToken reads live localStorage
+  }, [accessToken, refreshAccessToken, logout]);
 
   useEffect(() => {
     fetchWishlist();
@@ -66,15 +72,33 @@ const Wishlist = () => {
 
   const removeItem = async (productId) => {
     try {
-      const token = getToken();
-      if (!token) return;
+      if (!accessToken) return;
 
-      await fetch(`${API_URL}/wishlist/remove/${productId}/`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      let res = await fetch(
+        `${API_URL}/wishlist/remove/${productId}/`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      // 🔁 retry if expired
+      if (res.status === 401) {
+        const newToken = await refreshAccessToken();
+        if (!newToken) return logout();
+
+        await fetch(
+          `${API_URL}/wishlist/remove/${productId}/`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${newToken}`,
+            },
+          }
+        );
+      }
 
       fetchWishlist();
     } catch (err) {
