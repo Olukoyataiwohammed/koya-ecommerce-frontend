@@ -8,8 +8,7 @@ const Support = () => {
   const { accessToken, refreshAccessToken, logout } = useAuth();
 
   const [messages, setMessages] = useState([]);
-  const [selectedMessage, setSelectedMessage] = useState(null);
-  const [loading, setLoading] = useState(false); // 👈 start false
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const [form, setForm] = useState({
@@ -18,7 +17,9 @@ const Support = () => {
     message: "",
   });
 
-  // ✅ FETCH ONLY IF LOGGED IN
+  // -----------------------------
+  // FETCH MESSAGES
+  // -----------------------------
   const fetchMessages = useCallback(async () => {
     if (!accessToken) return;
 
@@ -54,13 +55,14 @@ const Support = () => {
     } catch (err) {
       console.error(err);
       setError("Network error");
-      setMessages([]);
     } finally {
       setLoading(false);
     }
   }, [accessToken, refreshAccessToken, logout]);
 
-  // ✅ RUN ONLY IF LOGGED IN
+  // -----------------------------
+  // LOAD ON LOGIN
+  // -----------------------------
   useEffect(() => {
     if (!accessToken) return;
 
@@ -70,11 +72,19 @@ const Support = () => {
     return () => clearInterval(interval);
   }, [accessToken, fetchMessages]);
 
+  // -----------------------------
+  // FORM CHANGE
+  // -----------------------------
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
   };
 
-  // ✅ SEND MESSAGE ONLY IF LOGGED IN
+  // -----------------------------
+  // SUBMIT MESSAGE
+  // -----------------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -119,7 +129,9 @@ const Support = () => {
     }
   };
 
-  // 🚨 🔥 MAIN FIX: BLOCK UI IF NOT LOGGED IN
+  // -----------------------------
+  // 🚨 BLOCK UNLOGGED USERS
+  // -----------------------------
   if (!accessToken) {
     return (
       <div>
@@ -131,6 +143,9 @@ const Support = () => {
     );
   }
 
+  // -----------------------------
+  // LOADING
+  // -----------------------------
   if (loading) return <p>Loading support messages...</p>;
 
   return (
@@ -139,13 +154,36 @@ const Support = () => {
 
       {error && <p style={{ color: "red" }}>{error}</p>}
 
+      {/* FORM */}
       <form onSubmit={handleSubmit}>
-        <input name="name" value={form.name} onChange={handleChange} placeholder="Name" required />
-        <input name="email" value={form.email} onChange={handleChange} placeholder="Email" required />
-        <textarea name="message" value={form.message} onChange={handleChange} placeholder="Message" required />
+        <input
+          name="name"
+          value={form.name}
+          onChange={handleChange}
+          placeholder="Name"
+          required
+        />
+
+        <input
+          name="email"
+          value={form.email}
+          onChange={handleChange}
+          placeholder="Email"
+          required
+        />
+
+        <textarea
+          name="message"
+          value={form.message}
+          onChange={handleChange}
+          placeholder="Message"
+          required
+        />
+
         <button type="submit">Send</button>
       </form>
 
+      {/* MESSAGES */}
       <div>
         <h3>All Messages</h3>
 
@@ -153,10 +191,7 @@ const Support = () => {
           <p>No messages yet</p>
         ) : (
           messages.map((msg) => (
-            <div
-              key={msg?.id}
-              style={{ marginTop: "10px", cursor: "pointer" }}
-            >
+            <div key={msg?.id} style={{ marginTop: "10px" }}>
               <p><strong>You:</strong> {msg?.message}</p>
 
               {msg?.reply && (
