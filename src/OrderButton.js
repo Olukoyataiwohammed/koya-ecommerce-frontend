@@ -97,7 +97,7 @@ export default function OrderButton({ form, newAddress, useNewAddress, token }) 
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: token ? `Bearer ${token}` : "",
         },
         body: JSON.stringify({ order: order.id }),
       });
@@ -154,7 +154,7 @@ export default function OrderButton({ form, newAddress, useNewAddress, token }) 
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: token ? `Bearer ${token}` : "",
         },
         body: JSON.stringify({ reference }),
       });

@@ -19,59 +19,56 @@ export const CartProvider = ({ children }) => {
 
   const [cart, setCart] = useState({
     items: [],
-    total_price: 0,
+    cart_total: 0,
   });
 
   const [loading, setLoading] = useState(false);
 
-  // ✅ HEADERS
+  // -----------------------------
+  // SAFE HEADERS
+  // -----------------------------
   const headers = useMemo(() => {
     return {
       "Content-Type": "application/json",
-      ...(accessToken && {
-        Authorization: `Bearer ${accessToken}`,
-      }),
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
     };
   }, [accessToken]);
 
   // -----------------------------
-  // 🟡 LOCAL CART (GUEST USERS)
+  // CLEAR CART (SAFE LOCAL RESET)
   // -----------------------------
-  const getLocalCart = () =>
-    JSON.parse(localStorage.getItem("cart")) || [];
-
-  const setLocalCart = (items) => {
-    localStorage.setItem("cart", JSON.stringify(items));
-    setCart({ items, total_price: 0 });
-  };
+  const clearCart = useCallback(() => {
+    setCart({
+      items: [],
+      cart_total: 0,
+    });
+  }, []);
 
   // -----------------------------
   // FETCH CART
   // -----------------------------
   const fetchCart = useCallback(async () => {
-    // 🟡 GUEST USER
-    if (!accessToken) {
-      const local = getLocalCart();
-      setCart({ items: local, total_price: 0 });
-      return;
-    }
-
     try {
       setLoading(true);
 
       let res = await fetch(`${API_BASE_URL}/cart/`, {
+        method: "GET",
         headers,
+        credentials: "include",
       });
 
-      // 🔁 HANDLE TOKEN EXPIRY
-      if (res.status === 401) {
+      // TOKEN EXPIRED → REFRESH
+      if (res.status === 401 && accessToken) {
         const newToken = await refreshAccessToken();
         if (!newToken) return logout();
 
         res = await fetch(`${API_BASE_URL}/cart/`, {
+          method: "GET",
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${newToken}`,
           },
+          credentials: "include",
         });
       }
 
@@ -81,47 +78,35 @@ export const CartProvider = ({ children }) => {
       }
 
       const data = await res.json();
-      setCart(data || { items: [], total_price: 0 });
+
+      setCart({
+        items: data.items || [],
+        cart_total: data.cart_total || 0,
+      });
     } catch (err) {
-      console.error("Cart error:", err);
+      console.error("Cart fetch error:", err);
     } finally {
       setLoading(false);
     }
   }, [accessToken, headers, refreshAccessToken, logout]);
 
   // -----------------------------
-  // ADD TO CART
+  // ADD ITEM
   // -----------------------------
   const addItemToCart = useCallback(
     async (product_id, quantity = 1) => {
-      // 🟡 GUEST USER (NO LOGIN)
-      if (!accessToken) {
-        const existing = getLocalCart();
-
-        const item = existing.find((i) => i.id === product_id);
-
-        if (item) {
-          item.quantity += quantity;
-        } else {
-          existing.push({ id: product_id, quantity });
-        }
-
-        setLocalCart(existing);
-        return;
-      }
-
       try {
         let res = await fetch(`${API_BASE_URL}/cart/add/`, {
           method: "POST",
           headers,
+          credentials: "include",
           body: JSON.stringify({
             product_id,
             quantity: Math.max(quantity, 1),
           }),
         });
 
-        // 🔁 HANDLE TOKEN EXPIRY
-        if (res.status === 401) {
+        if (res.status === 401 && accessToken) {
           const newToken = await refreshAccessToken();
           if (!newToken) return logout();
 
@@ -131,6 +116,7 @@ export const CartProvider = ({ children }) => {
               "Content-Type": "application/json",
               Authorization: `Bearer ${newToken}`,
             },
+            credentials: "include",
             body: JSON.stringify({
               product_id,
               quantity,
@@ -146,7 +132,7 @@ export const CartProvider = ({ children }) => {
 
         await fetchCart();
       } catch (err) {
-        console.error("Add error:", err);
+        console.error("Add cart error:", err);
       }
     },
     [accessToken, headers, fetchCart, refreshAccessToken, logout]
@@ -157,28 +143,43 @@ export const CartProvider = ({ children }) => {
   // -----------------------------
   const removeFromCart = useCallback(
     async (itemId) => {
-      if (!accessToken) {
-        const updated = getLocalCart().filter((i) => i.id !== itemId);
-        setLocalCart(updated);
-        return;
-      }
-
       try {
         await fetch(`${API_BASE_URL}/cart/item/${itemId}/remove/`, {
           method: "DELETE",
           headers,
+          credentials: "include",
         });
 
         await fetchCart();
       } catch (err) {
-        console.error(err);
+        console.error("Remove error:", err);
       }
     },
-    [accessToken, headers, fetchCart]
+    [headers, fetchCart]
   );
 
   // -----------------------------
-  // LOAD CART
+  // DECREASE ITEM
+  // -----------------------------
+  const decreaseProductFromCart = useCallback(
+    async (itemId) => {
+      try {
+        await fetch(`${API_BASE_URL}/cart/item/${itemId}/decrease/`, {
+          method: "DELETE",
+          headers,
+          credentials: "include",
+        });
+
+        await fetchCart();
+      } catch (err) {
+        console.error("Decrease error:", err);
+      }
+    },
+    [headers, fetchCart]
+  );
+
+  // -----------------------------
+  // LOAD CART ON START
   // -----------------------------
   useEffect(() => {
     fetchCart();
@@ -192,6 +193,8 @@ export const CartProvider = ({ children }) => {
         addItemToCart,
         fetchCart,
         removeFromCart,
+        decreaseProductFromCart,
+        clearCart,
       }}
     >
       {children}

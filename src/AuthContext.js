@@ -1,65 +1,74 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [authTokens, setAuthTokens] = useState(
-    JSON.parse(localStorage.getItem("authTokens")) || null
-  );
+  const [authTokens, setAuthTokens] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("authTokens")) || null;
+    } catch {
+      return null;
+    }
+  });
 
-  const [cartItems, setCartItems] = useState(
-    JSON.parse(localStorage.getItem("cartItems")) || []
-  );
-
-  // ✅ LOGIN (store BOTH tokens)
+  // -----------------------------
+  // LOGIN
+  // -----------------------------
   const login = (tokens) => {
     setAuthTokens(tokens);
     localStorage.setItem("authTokens", JSON.stringify(tokens));
   };
 
-  // ✅ LOGOUT
+  // -----------------------------
+  // LOGOUT
+  // -----------------------------
   const logout = () => {
     setAuthTokens(null);
     localStorage.removeItem("authTokens");
-    setCartItems([]);
-    localStorage.removeItem("cartItems");
     window.location.href = "/login";
   };
 
-  // ✅ REFRESH TOKEN FUNCTION
+  // -----------------------------
+  // REFRESH TOKEN
+  // -----------------------------
   const refreshAccessToken = async () => {
+    const refresh = authTokens?.refresh;
+
+    if (!refresh) {
+      logout();
+      return null;
+    }
+
     try {
       const res = await fetch(
         "https://azeezolabode.pythonanywhere.com/api/token/refresh/",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            refresh: authTokens?.refresh,
-          }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ refresh }),
         }
       );
 
       const data = await res.json();
 
-      if (res.ok) {
-        const newTokens = {
-          access: data.access,
-          refresh: authTokens.refresh, // keep old refresh
-        };
-
-        setAuthTokens(newTokens);
-        localStorage.setItem("authTokens", JSON.stringify(newTokens));
-
-        return data.access;
-      } else {
+      if (!res.ok) {
         logout();
+        return null;
       }
+
+      const newTokens = {
+        access: data.access,
+        refresh,
+      };
+
+      setAuthTokens(newTokens);
+      localStorage.setItem("authTokens", JSON.stringify(newTokens));
+
+      return data.access;
     } catch (err) {
       console.error("Refresh error:", err);
       logout();
+      return null;
     }
   };
 
@@ -73,7 +82,6 @@ export const AuthProvider = ({ children }) => {
         logout,
         refreshAccessToken,
         isAuthenticated: !!authTokens,
-        cartItems,
       }}
     >
       {children}

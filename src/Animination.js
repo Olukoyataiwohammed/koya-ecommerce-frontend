@@ -15,7 +15,7 @@ const Animination = () => {
 
  
   return (
-    <div className='bg-dark d-flex text-success'>
+    <div className='animination bg-dark d-flex text-success'>
         <h1><i>SPARK....</i></h1>
         <div className='text-light'>
           <i>{words[index]}</i>

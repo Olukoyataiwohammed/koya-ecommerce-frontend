@@ -64,7 +64,7 @@ const Header = () => {
         {/* 🔥 ACCOUNT DROPDOWN (REACT CONTROLLED) */}
         <div className="position-relative" ref={accountRef}>
           <button
-            className="btn btn-secondary bg-dark"
+            className="btn dropdown btn-secondary bg-dark"
             onClick={() => {
               setAccountOpen((v) => !v);
               setSupportOpen(false);
@@ -109,7 +109,7 @@ const Header = () => {
         {/* 🔥 SUPPORT DROPDOWN */}
         <div className="position-relative" ref={supportRef}>
           <button
-            className="btn btn-secondary bg-dark"
+            className="btn dropdown btn-secondary bg-dark"
             onClick={() => {
               setSupportOpen((v) => !v);
               setAccountOpen(false);
