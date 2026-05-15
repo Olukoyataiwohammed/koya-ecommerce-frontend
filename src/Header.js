@@ -15,6 +15,7 @@ const Header = () => {
     borderBottom: isActive ? "solid 1px black" : "",
     textDecoration: "none",
     color: "white",
+    marginTop: "5px",
   });
 
   const handleSearch = (e) => {
@@ -47,7 +48,7 @@ const Header = () => {
           <i>KOYA</i>
         </NavLink>
 
-        <form onSubmit={handleSearch} className="d-flex rounded">
+        <form onSubmit={handleSearch} className="d-flex rounded mt-1">
           <input 
             
             className="searchBox p-1 rounded-pill"
