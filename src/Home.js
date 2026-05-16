@@ -76,7 +76,7 @@ const Home = () => {
         style={{ height: "470px", border: "thick solid white", marginTop: "10px" }}
       >
         {/* 🔹 Carousel */}
-        <div id="carouselExampleSlidesOnly" className="carousel slide">
+        <div id="carouselExampleSlidesOnly" className="carousel slide rolls">
           <div className="carousel-inner">
             <div className="carousel-item active">
               <img src={mount} className="img d-block w-100" alt="iphones" />
@@ -118,9 +118,9 @@ const Home = () => {
         </div>
 
         {/* 🔹 Text Cards */}
-        <div className="card bg-dark">
+        <div className="card only bg-dark">
           <div className=" card_box d-flex gap-4 ">
-            <div className="card_box_size"
+            <div className="card_box_size card_box_sizes"
               style={{
                 width: "213px",
                 height: "195px",
@@ -153,8 +153,8 @@ const Home = () => {
             </div>
           </div>
 
-          <div className="card_box d-flex gap-4 mt-3">
-            <div className="card_box_size"
+          <div className="card_box  d-flex gap-4 mt-3">
+            <div className="card_box_size onlys "
               style={{
                 width: "213px",
                 height: "195px",

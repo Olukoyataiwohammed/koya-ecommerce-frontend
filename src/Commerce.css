@@ -414,6 +414,45 @@ footer {
 
 }
 @media only screen and (max-width:768px){
+  .animination h1{
+    font-size: 10px;
+
+  }
+  .animination div i{
+    font-size: 10px;
+  }
+   #header_row{
+    
+    justify-content: none;
+    padding: 0;
+    margin: 0;
+    font-size: 10px;
+    display: flex;
+  }
+ 
+  
+  
+   .searchBox{
+    width: 50px !important;
+    height: 15px !important;
+  }
+  .roundeds{
+    background: black;
+    padding: 0;
+    margin: 0;
+    width: 20px;
+    height: 20px;
+  }
+
+  .roundeds i{
+    font-size: 6px;
+  }
+  .dropdown{
+    font-size: 8px;
+  }
+  .nav-list{
+    font-size: 8px;
+  }
   .loginDetails{
   text-align: center;
   
@@ -511,6 +550,36 @@ footer {
   .price{
     font-size: 10px;
   }
+  .home_page{
+    height: 150px !important;
+  }
+  .home_page .img{
+  height: 110px;
+  width: 600px ;
+  }
+  .card_box_sizes{
+   display:none;
+  }
+  .card_box_size {
+    
+    align-content: center !important;
+    height: 90px !important;
+    font-size: 20px !important;
+  }
+  .p_name{
+    font-size: 10px;
+    padding: 0px;
+  }
+  .only{
+    
+    
+    background: green !important;
+  }
+  
+  
+  .slide{
+    width: 600px;
+  }
 
  
 }
@@ -551,6 +620,12 @@ footer {
     margin: 0;
     width: 20px;
     height: 20px;
+  }
+
+  .only{
+    
+    
+    background: none !important;
   }
 
   .roundeds i{
@@ -619,9 +694,11 @@ footer {
   }
   .home_page{
     height: 150px !important;
+    
   }
   .home_page .img{
   height: 100px;
+  
   }
   .product-dropdown {
     display: grid ;
@@ -690,15 +767,24 @@ footer {
   
   }
   .product-card{
-    width: 80px !important;
+    width: 60px !important;
     padding: 0px !important;
     margin: 0px !important;
-    height: 170px !important;
+    height: 150px !important;
   }
   .product-image{
-    width: 60px !important;
-    height: 80px !important;
+    width: 40px !important;
+    height: 60px !important;
     padding: 0px !important;
+  }
+  .p_name{
+    font-size: 8px;
+    height: 5px;
+    padding: 0px;
+  }
+  .wish{
+    font-size: 8px;
+    margin-bottom: 30px !important;
   }
   .product-name{
     font-size: 10px;
@@ -722,7 +808,11 @@ footer {
     font-size: 14px;
   }
   .price{
-    font-size: 10px;
+    font-size: 7px;
+    height: 15px !important;
+    padding: 0px !important;
+    margin: 0px !important;
+    
   }
   
 

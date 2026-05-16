@@ -13,7 +13,7 @@ import "./Commerce.css";
 
 const Store = () => {
   const { addItemToCart, fetchCart } = useCart();
-  const { accessToken } = useAuth(); // ✅ FIXED (was token)
+  const { accessToken } = useAuth();
   const { slug } = useParams();
 
   const [products, setProducts] = useState([]);
@@ -24,10 +24,34 @@ const Store = () => {
 
   const [loadingWishlist, setLoadingWishlist] = useState(null);
 
+  // 🔥 POPUP MESSAGE STATE
+  const [popup, setPopup] = useState({
+    show: false,
+    message: "",
+    type: "",
+  });
+
+  // 🔥 SHOW POPUP FUNCTION
+  const showPopup = (message, type = "success") => {
+    setPopup({
+      show: true,
+      message,
+      type,
+    });
+
+    setTimeout(() => {
+      setPopup({
+        show: false,
+        message: "",
+        type: "",
+      });
+    }, 3000);
+  };
+
   // ❤️ ADD TO WISHLIST
   const addToWishlist = async (productId) => {
     if (!accessToken) {
-      alert("Please login to add to wishlist");
+      showPopup("Please login to add to wishlist", "error");
       return;
     }
 
@@ -38,7 +62,7 @@ const Store = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`, // ✅ FIXED
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({ product_id: productId }),
       });
@@ -46,17 +70,22 @@ const Store = () => {
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        console.warn(data.detail || "Already in wishlist");
+        showPopup(
+          data.detail || data.message || "Already in wishlist",
+          "error"
+        );
       } else {
-        console.log("Added to wishlist ❤️");
+        showPopup("Item added to wishlist ❤️", "success");
       }
     } catch (err) {
       console.error("Wishlist error:", err);
+      showPopup("Failed to add item to wishlist", "error");
     } finally {
       setLoadingWishlist(null);
     }
   };
 
+  // 📦 LOAD STORE DATA
   useEffect(() => {
     const loadStoreData = async () => {
       try {
@@ -72,7 +101,7 @@ const Store = () => {
           ? response.ok
             ? await response.json()
             : []
-          : await fetchProducts(accessToken || null); // ✅ FIXED
+          : await fetchProducts(accessToken || null);
 
         const categoriesData = await fetchCategories();
         const brandsData = await fetchBrands();
@@ -97,6 +126,27 @@ const Store = () => {
   return (
     <div className="container">
       <h2>Store</h2>
+
+      {/* 🔥 POPUP MESSAGE */}
+      {popup.show && (
+        <div
+          style={{
+            position: "fixed",
+            top: "20px",
+            right: "20px",
+            padding: "15px 20px",
+            borderRadius: "8px",
+            color: "#fff",
+            zIndex: 9999,
+            fontWeight: "bold",
+            backgroundColor:
+              popup.type === "success" ? "green" : "crimson",
+            boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
+          }}
+        >
+          {popup.message}
+        </div>
+      )}
 
       <div className="filters">
         <select>
@@ -134,19 +184,40 @@ const Store = () => {
               alt={product.name}
             />
 
-            <h4 style={{ textAlign: "left" }}>{product.name}</h4>
-            <p style={{ textAlign: "left" }}>₦{product.price}</p>
+            <h4
+              className="p_name"
+              style={{ textAlign: "left" }}
+            >
+              {product.name}
+            </h4>
 
-            {/* 🛒 ADD TO CART (FIXED) */}
+            <p
+              className="p_name"
+              style={{ textAlign: "left" }}
+            >
+              ₦{product.price}
+            </p>
+
+            {/* 🛒 ADD TO CART */}
             <button
-              className="price w-100 text-white bg-black"
+              className="price pricess w-100 text-white bg-black"
               onClick={async () => {
-                console.log("Adding to cart:", product.id);
+                try {
+                  console.log("Adding to cart:", product.id);
 
-                await addItemToCart(product.id, 1);
+                  await addItemToCart(product.id, 1);
 
-                // 🔥 ensure UI updates instantly
-                fetchCart();
+                  await fetchCart();
+
+                  showPopup("Item added to cart 🛒", "success");
+                } catch (err) {
+                  console.error(err);
+
+                  showPopup(
+                    err.message || "Failed to add item to cart",
+                    "error"
+                  );
+                }
               }}
             >
               Add to Cart
@@ -154,11 +225,13 @@ const Store = () => {
 
             {/* ❤️ WISHLIST */}
             <button
-              className="w-100 mt-2"
+              className="wish w-100 mt-2"
               onClick={() => addToWishlist(product.id)}
               disabled={loadingWishlist === product.id}
             >
-              {loadingWishlist === product.id ? "Adding..." : "❤️ Wishlist"}
+              {loadingWishlist === product.id
+                ? "Adding..."
+                : "❤️ Wishlist"}
             </button>
           </div>
         ))}
