@@ -36,7 +36,7 @@ const Login = ({ onPressed }) => {
         return;
       }
 
-      // ✅ IMPORTANT FIX: store BOTH tokens
+      
       if (!data.access || !data.refresh) {
         setError("Invalid server response (missing tokens)");
         setLoading(false);
@@ -94,8 +94,8 @@ const Login = ({ onPressed }) => {
       </form>
 
       <div className="display">
-        <p onClick={onPressed}>Sign Up</p>
-        <p>Forgot Password</p>
+        <p className="displays" onClick={onPressed}>Sign Up</p>
+        <p className="displays">Forgot Password</p>
       </div>
     </div>
   );

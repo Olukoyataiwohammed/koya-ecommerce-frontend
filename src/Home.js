@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
 import { Carousel } from "bootstrap";
 import "./Commerce.css";
 import phoneTwo from "./asset/iphseventeen.jpeg"
@@ -20,6 +21,12 @@ const Home = () => {
   const [index, setIndex] = useState(0);
   const [products, setProducts] = useState([]);
   const [wantedProduct , setWantedProduct] = useState([]);
+
+  const HomeDisplay = ({ isActive }) => ({
+    textDecoration: "none",
+    color: "white",
+    
+  });
 
 
   useEffect(() =>{
@@ -120,6 +127,7 @@ const Home = () => {
         {/* 🔹 Text Cards */}
         <div className="card only bg-dark">
           <div className=" card_box d-flex gap-4 ">
+            <NavLink to="/store/fashion-koya" style={HomeDisplay}>
             <div className="card_box_size card_box_sizes"
               style={{
                 width: "213px",
@@ -137,7 +145,8 @@ const Home = () => {
                 Fashions
               </i>
             </div>
-
+            </NavLink>
+            <NavLink to="/store/phones-tablets" style={HomeDisplay}>
             <div className="card_box_size second_card"
               style={{
                 width: "213px",
@@ -146,14 +155,17 @@ const Home = () => {
                 textAlign: "center",
                 fontSize: "30px",
                 fontWeight: 700,
-                alignContent: "center"
+                alignContent: "center",
+                color: "black",
               }}
             >
               <i>{cardWord[index]}</i>
             </div>
+            </NavLink>
           </div>
 
           <div className="card_box  d-flex gap-4 mt-3">
+            <NavLink  to="/store/electronics" style={HomeDisplay}>
             <div className="card_box_size onlys "
               style={{
                 width: "213px",
@@ -162,12 +174,14 @@ const Home = () => {
                 textAlign: "center",
                 fontSize: "30px",
                 fontWeight: 700,
-                alignContent: "center"
+                alignContent: "center",
+                color: "black",
               }}
             >
               {cardWordOne[index]}
             </div>
-
+            </NavLink>
+            <NavLink  to="/store/shoes" style={HomeDisplay}>
             <div className="card_box_size second_card"
               style={{
                 width: "213px",
@@ -176,11 +190,12 @@ const Home = () => {
                 textAlign: "center",
                 fontSize: "30px",
                 fontWeight: 700,
-                alignContent: "center"
+                alignContent: "center",
+                color: "black",
               }}
             >
               {cardWordTwo[index]}
-            </div>
+            </div></NavLink>
           </div>
         </div>
       </div>
@@ -191,7 +206,13 @@ const Home = () => {
           <h3>
             <i>APPLE PHONES AND TABLET</i>
           </h3>
-          <h4>See all  </h4>
+           <NavLink
+            to="/store/Iphones"
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            <h4>See all</h4>
+          </NavLink>
+          
         </div>
         <div className="homeSeconds d-flex">
           {products.map((item, i) => (
@@ -213,10 +234,12 @@ const Home = () => {
           <h3>
             <i>TOP QUALITY PRODUCTS</i>
           </h3>
-          <h3>
-
-            <i>See All</i>
-          </h3>
+          <NavLink
+            to="/store"
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            <h3>See all</h3>
+          </NavLink>
         </div>
         <div className="container container_product ">
           {wantedProduct.map((items,i) => (

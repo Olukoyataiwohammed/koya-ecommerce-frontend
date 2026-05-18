@@ -51,8 +51,8 @@ const SignUp = (props) => {
 
 
   return (
-    <div>
-        <form onSubmit={handleSubmitSuccess}>
+    <div className="loginDetails">
+        <form className="formLogin" onSubmit={handleSubmitSuccess}>
         
         
         
@@ -60,14 +60,14 @@ const SignUp = (props) => {
         <div className='firstDiv'>
             <label>
                 userName:
-                <input type='text' className='userName' value={username} onChange={(e)=> setUserName(e.target.value)} name='username' required/>
+                <input type='text' className="userName inpt" value={username} onChange={(e)=> setUserName(e.target.value)} name='username' required/>
             </label>
         </div>
         
         <div className='firstDiv'>
             <label>
                 Email:
-                <input type='email' className='email' value={email} onChange={(e)=> setEmail(e.target.value)} placeholder='@gmail.com' name='email' required/>
+                <input type='email' className="email inps" value={email} onChange={(e)=> setEmail(e.target.value)} placeholder='@gmail.com' name='email' required/>
             </label>
         </div>
         
@@ -75,11 +75,11 @@ const SignUp = (props) => {
         <div className='firstDiv'>
             <label>
                 Password:
-                <input type='password' value={password} onChange={(e)=> setPassWord(e.target.value)} name='password' required/>
+                <input type='password' className="inpt" value={password} onChange={(e)=> setPassWord(e.target.value)} name='password' required/>
             </label>
         </div>
         
-        <button type='submit'>Submit</button>
+        <button type='submit' className="w-50">Submit</button>
       </form>
       {message && <p>{message}</p>}
     </div>
