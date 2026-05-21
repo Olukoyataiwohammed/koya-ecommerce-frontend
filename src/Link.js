@@ -18,6 +18,8 @@ import OrderOnline from "./OrderOnline";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import WishList from "./WishList";
+import CancelOrders from './CancelOrders'
+import TrackOrders from './TrackOrders'
 
 
 const App = () => {
@@ -48,6 +50,8 @@ const App = () => {
             <Route path="/store/:slug" element={<Store />} />
             <Route path="/product/:slug" element={<ProductDetails />} />
             <Route path="/wishlist" element={<WishList />} />
+            <Route path='/cancel_order' element={<CancelOrders/>}/>
+            <Route path='/order_tracking' element={<TrackOrders/>}/>
           </Routes>
         </main>
         <Navbar/>

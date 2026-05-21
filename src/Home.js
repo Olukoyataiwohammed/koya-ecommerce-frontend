@@ -128,7 +128,7 @@ const Home = () => {
         <div className="card only bg-dark">
           <div className=" card_box d-flex gap-4 ">
             <NavLink to="/store/fashion-koya" style={HomeDisplay}>
-            <div className="card_box_size card_box_sizes"
+            <div className="card_box_size card_box_sizes twenty_four"
               style={{
                 width: "213px",
                 height: "195px",
@@ -147,7 +147,7 @@ const Home = () => {
             </div>
             </NavLink>
             <NavLink to="/store/phones-tablets" style={HomeDisplay}>
-            <div className="card_box_size second_card"
+            <div className="card_box_size second_card twenty_four"
               style={{
                 width: "213px",
                 height: "195px",
@@ -166,7 +166,7 @@ const Home = () => {
 
           <div className="card_box  d-flex gap-4 mt-3">
             <NavLink  to="/store/electronics" style={HomeDisplay}>
-            <div className="card_box_size onlys "
+            <div className="card_box_size onlys twenty_four"
               style={{
                 width: "213px",
                 height: "195px",
@@ -182,7 +182,7 @@ const Home = () => {
             </div>
             </NavLink>
             <NavLink  to="/store/shoes" style={HomeDisplay}>
-            <div className="card_box_size second_card"
+            <div className="card_box_size second_card twenty_four"
               style={{
                 width: "213px",
                 height: "195px",
